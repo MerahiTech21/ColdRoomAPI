@@ -24,12 +24,20 @@ try {
  db.productType=require('../models/productType.js')(sequelize,DataTypes);
  db.coldRoomProduct=require('../models/coldRoomProduct.js')(sequelize,DataTypes);
  db.rent=require('../models/rent.js')(sequelize,DataTypes);
+ db.wholeSaler=require('../models/wholeSaler.js')(sequelize,DataTypes);
+ db.order=require('../models/order.js')(sequelize,DataTypes);
+ db.productTypePrice=require('../models/productTypePrice.js')(sequelize,DataTypes);
+
+
+
+
+ 
 
 
  db.sequelize.sync({force:true}).then(()=>{
   console.log('yes re-sync is done')
 }).catch((err)=>{
-  console.log('fail to re-sync');
+  console.log(err);
 });
 
 //creating a relationship
@@ -48,10 +56,23 @@ db.coldRoom.belongsTo(db.employee,{
 });
  db.product.hasMany(db.productType);
  db.productType.belongsTo(db.product);
- db.productType.belongsToMany(db.ColdRoom,{through:db.coldRoomProduct });
- db.ColdRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
+ db.productType.belongsToMany(db.coldRoom,{through:db.coldRoomProduct });
+ db.coldRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
 //  db.rent.belongsTo(db.coldRoom);
 //  db.coldRoom.hasOne(db.rent);
+db.order.belongsTo(db.coldRoom,{
+  foreignKey:'coldRoomId',
+  as:'coldRoom',
+  
+
+});
+db.wholeSaler.hasMany(db.order);
+db.order.belongsTo(db.wholeSaler);
+
+db.productType.hasOne(db.productTypePrice);
+db.productTypePrice.belongsTo(db.productType);
+db.coldRoom.hasOne(db.productTypePrice);
+db.productTypePrice.belongsTo(db.coldRoom);
 
 
 
