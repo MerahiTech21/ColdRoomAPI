@@ -1,4 +1,6 @@
-const Sequelize=require('sequelize')
+const Sequelize=require('sequelize');
+const DataTypes=require('sequelize');
+const coldRoom = require('../models/coldRoom.js');
 
 const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',})
 
@@ -13,5 +15,19 @@ try {
 
  db.sequelize=sequelize
  db.Sequelize=Sequelize
+
+ const address=require('../models/address.js')(sequelize,DataTypes);
+ const ColdRoom=require('../models/coldRoom.js')(sequelize,DataTypes);
+ const farmer=require('../models/farmer.js')(sequelize,DataTypes);
+
+
+ db.sequelize.sync({force:false}).then(()=>{
+  console.log('yes re-sync is done')
+}).catch((err)=>{
+  console.log('fail to re-sync');
+});
+
+coldRoom.belongsTo(address);
+farmer.belongsTo(address);
 
 module.exports ={db,sequelize};
