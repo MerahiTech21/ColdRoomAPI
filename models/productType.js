@@ -3,6 +3,12 @@ const { DataTypes } = require("sequelize")
 module.exports=(sequelize,Datatypes)=>{
     const productType=sequelize.define("ProductType",
     {
+        id:{
+            type:DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+            
+        },
         title:{
             type:DataTypes.STRING,
 
@@ -18,7 +24,8 @@ module.exports=(sequelize,Datatypes)=>{
         },
     }
 
-    )
+    );
+    return productType;
 
 }
 

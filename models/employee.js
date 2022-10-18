@@ -1,25 +1,31 @@
 module.exports=(sequelize,DataTypes)=>{
-    const farmer=sequelize.define("farmer",
-    {
+    const employee=sequelize.define('employee',{
         fname:{
             type:DataTypes.STRING,
+            allowNull:false
+
         },
         lname:{
             type:DataTypes.STRING,
+            allowNull:false
+
         },
-        phoneNo:{
+        phoneNumber:{
             type:DataTypes.STRING,
+            allowNull:false,
             unique:true,
 
         },
         sex:{
             type:DataTypes.STRING,
-
+            allowNull:false,
+        },
+        role:{
+            type:DataTypes.STRING,
 
         }
-    }
-        
-    );
-    return farmer;
+
+    });
+    return employee;
 
 }

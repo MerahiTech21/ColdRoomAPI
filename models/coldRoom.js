@@ -1,6 +1,12 @@
 module.exports=(sequelize,DataTypes)=>{
 
     const coldRoom=sequelize.define('coldRoom',{
+        id:{
+            type:DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+            
+        },
 
         name:{
             type:DataTypes.STRING,
@@ -19,6 +25,7 @@ module.exports=(sequelize,DataTypes)=>{
 
 
     });
+    return coldRoom;
 
 
 }

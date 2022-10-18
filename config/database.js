@@ -1,8 +1,8 @@
 const Sequelize=require('sequelize');
 const DataTypes=require('sequelize');
-const coldRoom = require('../models/coldRoom.js');
+//const coldRoom = require('../models/coldRoom.js');
 
-const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',})
+const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',});
 
 try {
     sequelize.authenticate();
@@ -11,37 +11,47 @@ try {
    console.error('Sequelize Unable to connect to the database:', error);
  }
  
- const db ={}
-
- db.sequelize=sequelize
- db.Sequelize=Sequelize
-
+ const db ={};
+ db.sequelize=sequelize;
+ db.Sequelize=Sequelize;
  //importing a model
- const product=require('../models/product.js')(sequelize,DataTypes);
- const address=require('../models/address.js')(sequelize,DataTypes);
- const ColdRoom=require('../models/coldRoom.js')(sequelize,DataTypes);
- const farmer=require('../models/farmer.js')(sequelize,DataTypes);
- const productType=require('../models/productType.js')(sequelize,DataTypes);
- const coldRoomProduct=require('../models/coldRoomProduct.js')(sequelize,DataTypes);
- const rent=require('../models/rent')(sequelize,DataTypes);
+ db.product=require('../models/product.js')(sequelize,DataTypes);
+ db.address=require('../models/address.js')(sequelize,DataTypes);
+ db.employee=require('../models/employee.js')(sequelize,DataTypes);
+
+ db.coldRoom=require('../models/coldRoom.js')(sequelize,DataTypes);
+ db.farmer=require('../models/farmer.js')(sequelize,DataTypes);
+ db.productType=require('../models/productType.js')(sequelize,DataTypes);
+ db.coldRoomProduct=require('../models/coldRoomProduct.js')(sequelize,DataTypes);
+ db.rent=require('../models/rent.js')(sequelize,DataTypes);
 
 
-
- db.sequelize.sync({force:false}).then(()=>{
+ db.sequelize.sync({force:true}).then(()=>{
   console.log('yes re-sync is done')
 }).catch((err)=>{
   console.log('fail to re-sync');
 });
 
 //creating a relationship
-coldRoom.belongsTo(address);
-farmer.belongsTo(address);
-product.hasMany(productType);
-productType.belongsTo(product);
-productType.belongsToMany(ColdRoom,{through:coldRoomProduct });
-ColdRoom.belongsToMany(productType,{through:coldRoomProduct});
-rent.belongsTo(coldRoom);
-coldRoom.hasOne(rent);
+db.coldRoom.belongsTo(db.address,{
+  foreignKey:'addressId',
+  as:'address'
+});
+db.coldRoom.belongsTo(db.employee,{
+  foreignKey:'employeeId',
+  as:'employee'
+});
+ db.farmer.belongsTo(db.address,{
+  foreignKey:'addressId',
+  as:'address'
+
+});
+ db.product.hasMany(db.productType);
+ db.productType.belongsTo(db.product);
+ db.productType.belongsToMany(db.ColdRoom,{through:db.coldRoomProduct });
+ db.ColdRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
+//  db.rent.belongsTo(db.coldRoom);
+//  db.coldRoom.hasOne(db.rent);
 
 
 

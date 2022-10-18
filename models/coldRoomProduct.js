@@ -7,23 +7,27 @@ module.exports=(sequelize,DataTypes)=>{
          coldRoomId:{
              type:DataTypes.INTEGER,
              references:{
-                 model:'coldRoom',
-                 key:id,
-             }
+                 model:'coldRooms',
+                 key:'id',
+                 allowNull:false,
+             },
 
          },
          productTypeId:{
              type:DataTypes.INTEGER,
              references:{
-                 model:'productType',
-                 key:id,
+                 model:'productTypes',
+                 key:'id',
+                 allowNull:false,
 
-             },
-             price:{
+
+             }
+            },
+         price:{
                 type:DataTypes.DOUBLE,
             },
 
-         }
+         
          
         }
     );
