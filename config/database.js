@@ -16,9 +16,15 @@ try {
  db.sequelize=sequelize
  db.Sequelize=Sequelize
 
+ //importing a model
+ const product=require('../models/product.js')(sequelize,DataTypes);
  const address=require('../models/address.js')(sequelize,DataTypes);
  const ColdRoom=require('../models/coldRoom.js')(sequelize,DataTypes);
  const farmer=require('../models/farmer.js')(sequelize,DataTypes);
+ const productType=require('../models/productType.js')(sequelize,DataTypes);
+ const coldRoomProduct=require('../models/coldRoomProduct.js')(sequelize,DataTypes);
+ const rent=require('../models/rent')(sequelize,DataTypes);
+
 
 
  db.sequelize.sync({force:false}).then(()=>{
@@ -27,7 +33,16 @@ try {
   console.log('fail to re-sync');
 });
 
+//creating a relationship
 coldRoom.belongsTo(address);
 farmer.belongsTo(address);
+product.hasMany(productType);
+productType.belongsTo(product);
+productType.belongsToMany(ColdRoom,{through:coldRoomProduct });
+ColdRoom.belongsToMany(productType,{through:coldRoomProduct});
+rent.belongsTo(coldRoom);
+coldRoom.hasOne(rent);
+
+
 
 module.exports ={db,sequelize};
