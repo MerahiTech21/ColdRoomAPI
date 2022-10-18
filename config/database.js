@@ -1,6 +1,6 @@
 const Sequelize=require('sequelize')
 
-const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3308',})
+const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',})
 
 try {
     sequelize.authenticate();
