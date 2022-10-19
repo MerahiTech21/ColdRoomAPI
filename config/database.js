@@ -17,8 +17,8 @@ try {
  //importing a model
  db.product=require('../models/product.js')(sequelize,DataTypes);
  db.address=require('../models/address.js')(sequelize,DataTypes);
+ db.account=require('../models/account.js')(sequelize,DataTypes);
  db.employee=require('../models/employee.js')(sequelize,DataTypes);
-
  db.coldRoom=require('../models/coldRoom.js')(sequelize,DataTypes);
  db.farmer=require('../models/farmer.js')(sequelize,DataTypes);
  db.productType=require('../models/productType.js')(sequelize,DataTypes);
@@ -27,6 +27,7 @@ try {
  db.wholeSaler=require('../models/wholeSaler.js')(sequelize,DataTypes);
  db.order=require('../models/order.js')(sequelize,DataTypes);
  db.productTypePrice=require('../models/productTypePrice.js')(sequelize,DataTypes);
+
 
 
 
@@ -44,6 +45,11 @@ try {
 db.coldRoom.belongsTo(db.address,{
   foreignKey:'addressId',
   as:'address'
+});
+db.employee.belongsTo(db.account,{
+  foreignKey:'accountId',
+  as:'account',
+
 });
 db.coldRoom.belongsTo(db.employee,{
   foreignKey:'employeeId',
@@ -63,8 +69,6 @@ db.coldRoom.belongsTo(db.employee,{
 db.order.belongsTo(db.coldRoom,{
   foreignKey:'coldRoomId',
   as:'coldRoom',
-  
-
 });
 db.wholeSaler.hasMany(db.order);
 db.order.belongsTo(db.wholeSaler);
@@ -73,6 +77,7 @@ db.productType.hasOne(db.productTypePrice);
 db.productTypePrice.belongsTo(db.productType);
 db.coldRoom.hasOne(db.productTypePrice);
 db.productTypePrice.belongsTo(db.coldRoom);
+
 
 
 

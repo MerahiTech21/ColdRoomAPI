@@ -12,7 +12,15 @@ module.exports=(sequelize,DataTypes)=>{
             type:DataTypes.DOUBLE,
 
         },
+    },
+    {
+        uniqueKeys:{
+            actions_unique: {
+                fields: ['productTypeId', 'coldRoomId']
+            }
+        }
     }
+    
 
     );
     return productTypePrice;

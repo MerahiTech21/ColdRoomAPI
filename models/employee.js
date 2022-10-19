@@ -1,16 +1,22 @@
 module.exports=(sequelize,DataTypes)=>{
     const employee=sequelize.define('employee',{
-        fname:{
+        fName:{
             type:DataTypes.STRING,
             allowNull:false
 
         },
-        lname:{
+        lName:{
             type:DataTypes.STRING,
             allowNull:false
 
         },
         phoneNumber:{
+            type:DataTypes.STRING,
+            allowNull:false,
+            unique:true,
+
+        },
+        email:{
             type:DataTypes.STRING,
             allowNull:false,
             unique:true,
