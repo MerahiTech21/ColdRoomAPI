@@ -1,6 +1,5 @@
 const db = require("../config//database");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 const Employee = db.employee;
 
@@ -29,12 +28,12 @@ const create = async (req, res) => {
 
     if (accountId) {
       userInfo.accountId = accountId;
-      let user = await User.create(userInfo);
-      res.status(200).json(user);
-      console.log("user", JSON.stringify(user));
+      let employee = await Employee.create(userInfo);
+      res.status(200).json(employee);
+      console.log("employee", JSON.stringify(employee));
     }
   } catch (err) {
-    console.log("error while creating user" + err);
+    console.log("error while creating employee" + err);
     return;
   }
 };
@@ -53,11 +52,12 @@ const createAccount = async (req) => {
     return account.id;
   } catch (err) {}
 };
-const getALl = async (req, res) => {
+
+const getAll = async (req, res) => {
   try {
-    let users = await User.findAll({ attributes: { exclude: ["password"] } });
-    res.status(200).send(users);
-    console.log(users);
+    let employees = await Employee.findAll({ attributes: { exclude: ["password"] } });
+    res.status(200).json(employees);
+    console.log(employees);
   } catch (err) {
     console.log(err);
   }
@@ -65,27 +65,30 @@ const getALl = async (req, res) => {
 
 const getOne = async (req, res) => {
   let id = req.params.id;
-  let user = await User.findOne({ where: { id: id } });
-  res.status(200).send(user);
-  console.log(user);
+  let employee = await Employee.findOne({ where: { id: id } });
+  if(! employee){
+    res.status(404).json('Employee Not FOund')
+  }
+  res.status(200).json(employee);
+  console.log(employee);
 };
 
 //update user
 
 const update = async (req, res) => {
   let id = req.params.id;
-  let user = await User.update(req.body, { where: { id: id } });
-  if (user) {
-    res.status(200).send(await User.findOne({ where: { id: id } }));
+  let employee = await Employee.update(req.body, { where: { id: id } });
+  if (employee) {
+    res.status(200).send(await Employee.findOne({ where: { id: id } }));
   }
-  console.log(user);
+  console.log(employee);
 };
 
 //delete user
 
 const destroy = async (req, res) => {
   let id = req.params.id;
-  await User.destroy({ where: { id: id } });
+  await Employee.destroy({ where: { id: id } });
   res.status(200).send("deleted successfully");
   console.log("deleted");
 };
