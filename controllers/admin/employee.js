@@ -14,7 +14,6 @@ const create = async (req, res) => {
   };
 
   try {
-    // check if user already exist
     // Validate if user exist in our database
     const oldEmployee = await Employee.findOne({
       where: { email: userInfo.email },
