@@ -1,13 +1,13 @@
 module.exports=(sequelize,DataTypes)=>{
     const farmer=sequelize.define("farmer",
     {
-        fname:{
+        fName:{
             type:DataTypes.STRING,
         },
-        lname:{
+        lName:{
             type:DataTypes.STRING,
         },
-        phoneNo:{
+        phoneNumber:{
             type:DataTypes.STRING,
             unique:true,
 
