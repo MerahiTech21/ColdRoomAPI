@@ -2,7 +2,7 @@ const Sequelize=require('sequelize');
 const DataTypes=require('sequelize');
 //const coldRoom = require('../models/coldRoom.js');
 
-const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',});
+const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3308',});
 
 try {
     sequelize.authenticate();
