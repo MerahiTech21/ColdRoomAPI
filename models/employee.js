@@ -28,6 +28,12 @@ module.exports=(sequelize,DataTypes)=>{
         },
         role:{
             type:DataTypes.STRING,
+            allowNull:false,
+
+        },
+        password:{
+            type:DataTypes.STRING,
+           allowNull:false,
 
         }
 

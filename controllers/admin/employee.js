@@ -1,57 +1,54 @@
-const db = require("../config//database");
+const {db} = require("../../config/database");
 const bcrypt = require("bcrypt");
 
 const Employee = db.employee;
 
 const create = async (req, res) => {
-  let userInfo = {
+  var userInfo = {
     fName: req.body.fName,
     lName: req.body.lName,
     phoneNumber: req.body.phoneNumber,
     sex: req.body.sex,
     email: req.body.email,
-    role: "employee",
+    sex: req.body.sex,
+    role: req.body.role,
   };
 
   try {
-    // check if user already exist
     // Validate if user exist in our database
     const oldEmployee = await Employee.findOne({
       where: { email: userInfo.email },
     });
 
-    if (oldEmployee) {
+    const oldEmployeePhone = await Employee.findOne({
+        where: { phoneNumber: userInfo.phoneNumber },
+      });
+  
+    if (oldEmployee || oldEmployeePhone) {
       return res.status(409).json("User Already Exist. Please Login");
     }
+   let password=`${userInfo.lName}1234`;
+   password=password.trim()
+   //res.json(password)
+    let encryptedPassword = await bcrypt.hash(password, 10);
 
-    let accountId = createAccount(req);
+    // let accountId =await createAccount(userInfo.email,userInfo.lName);
 
-    if (accountId) {
-      userInfo.accountId = accountId;
-      let employee = await Employee.create(userInfo);
+  
+      userInfo.password = encryptedPassword;
+         // res.json(userInfo.encryptedPassword)
+
+      let employee = await Employee.create(userInfo)
+     // const {password,...others}=employee
       res.status(200).json(employee);
       console.log("employee", JSON.stringify(employee));
-    }
+    
   } catch (err) {
     console.log("error while creating employee" + err);
     return;
   }
 };
 
-const createAccount = async (req) => {
-  //Encrypt user password
-  let encryptedPassword = await bcrypt.hash(req.lName + "1234", 10);
-
-  try {
-    account = await Account.create({
-      email: req.email,
-      password: encryptedPassword,
-      type: "employee",
-    });
-
-    return account.id;
-  } catch (err) {}
-};
 
 const getAll = async (req, res) => {
   try {

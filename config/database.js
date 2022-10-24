@@ -31,11 +31,7 @@ try {
 
 
 
-
- 
-
-
- db.sequelize.sync({force:true}).then(()=>{
+ db.sequelize.sync({force:false}).then(()=>{
   console.log('yes re-sync is done')
 }).catch((err)=>{
   console.log(err);
