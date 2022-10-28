@@ -2,15 +2,17 @@ const Sequelize=require('sequelize');
 const DataTypes=require('sequelize');
 //const coldRoom = require('../models/coldRoom.js');
 
-const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3308',});
-
+// const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3308',});
+const sequelize= new Sequelize('merahitechnologi_cold_room','merahitechnologi_cold_room_user','C}LeGld72#_c',{dialect:'mysql',host:'merahitechnologies.com',port:'3306',});
+  
 try {
     sequelize.authenticate();
    console.log('Sequelize Connection has been established successfully.');
  } catch (error) {
-   console.error('Sequelize Unable to connect to the database:', error);
+   console.error('Sequelize Unable to connect to the database:');
  }
  
+ try{
  const db ={};
  db.sequelize=sequelize;
  db.Sequelize=Sequelize;
@@ -27,26 +29,22 @@ try {
  db.wholeSaler=require('../models/wholeSaler.js')(sequelize,DataTypes);
  db.order=require('../models/order.js')(sequelize,DataTypes);
  db.productTypePrice=require('../models/productTypePrice.js')(sequelize,DataTypes);
+ db.farmerProduct=require('../models/farmer-product')(sequelize,DataTypes);
 
 
 
 
- db.sequelize.sync({force:false}).then(()=>{
-  console.log('yes re-sync is done')
-}).catch((err)=>{
-  console.log(err);
-});
 
 //creating a relationship
 db.coldRoom.belongsTo(db.address,{
   foreignKey:'addressId',
   as:'address'
 });
-db.employee.belongsTo(db.account,{
-  foreignKey:'accountId',
-  as:'account',
+// db.employee.belongsTo(db.account,{
+//   foreignKey:'accountId',
+//   as:'account',
 
-});
+// });
 db.coldRoom.belongsTo(db.employee,{
   foreignKey:'employeeId',
   as:'employee'
@@ -56,10 +54,15 @@ db.coldRoom.belongsTo(db.employee,{
   as:'address'
 
 });
+db.wholeSaler.belongsTo(db.address,{
+  foreignKey:'addressId',
+  as:'address'
+
+});
  db.product.hasMany(db.productType);
  db.productType.belongsTo(db.product);
- db.productType.belongsToMany(db.coldRoom,{through:db.coldRoomProduct });
- db.coldRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
+
+
 //  db.rent.belongsTo(db.coldRoom);
 //  db.coldRoom.hasOne(db.rent);
 db.order.belongsTo(db.coldRoom,{
@@ -73,8 +76,32 @@ db.productType.hasOne(db.productTypePrice);
 db.productTypePrice.belongsTo(db.productType);
 db.coldRoom.hasOne(db.productTypePrice);
 db.productTypePrice.belongsTo(db.coldRoom);
+//////
+db.farmerProduct.belongsTo(db.product)
+db.product.hasMany(db.farmerProduct)
+db.farmerProduct.belongsTo(db.farmer)
+db.farmer.hasMany(db.farmerProduct)
 
+db.farmerProduct.belongsTo(db.productType)
+db.productType.hasMany(db.farmerProduct)
 
+db.productType.belongsToMany(db.coldRoom,{through:db.coldRoomProduct });
+db.coldRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
+
+db.farmer.belongsToMany(db.productType,{through:db.farmerProduct})
+db.productType.belongsToMany(db.farmer,{through:db.farmerProduct})
+
+db.sequelize.sync({alter:true}).then(()=>{
+
+  // db.farmerProduct.sync({force:true}).then(()=>{})
+    console.log('yes re-sync is done')
+}).catch((err)=>{
+  console.log(err);
+  
+});
 
 
 module.exports ={db,sequelize};
+ }catch(err){
+  console.log('seems database error',err)
+ }

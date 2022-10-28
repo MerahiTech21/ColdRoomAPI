@@ -1,28 +1,27 @@
 const {db}=require('../../config/database');
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken');
-const Employee = db.employee;
-const Account = db.account;
+const Farmer = db.farmer;
 require('dotenv').config()
 
 const Login=async (req,res)=>{
-  let email=req.body.email;
+  let phoneNumber=req.body.phoneNumber;
   let password=req.body.password;
 
   try{
-  const employee=await Employee.findOne({where:{email}});
-    if(!employee){
+  const farmer=await Farmer.findOne({where:{phoneNumber}});
+    if(!farmer){
       throw new Error('User Not Found !')
     }
     //decrept password and compare
-    const valide=await bcrypt.compare(password,employee.password)
+    const valide=await bcrypt.compare(password,farmer.password)
   //  res.json(valide);
      if(! valide ){
-        res.status(401).json("Email or Password Incorrect!")
+        res.status(401).json("Phone NUmber or Password Incorrect!")
     }
 
-    const token= jwt.sign({id:employee.id,email},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
-    res.status(200).json({id:employee.id,email:employee.email,token:token})
+    const token= jwt.sign({id:farmer.id,phoneNumber},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
+    res.status(200).json({id:farmer.id,phoneNumber:farmer.phoneNumber,token:token})
 
   }catch(err){
     res.json(err) 

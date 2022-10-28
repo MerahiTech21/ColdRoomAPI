@@ -1,12 +1,12 @@
 module.exports=(sequelize,DataTypes)=>{
     const wholeSaler=sequelize.define(
         'wholeSaler',{
-            fname:{
+            fName:{
                 type:DataTypes.STRING,
                 allowNull:false,
 
             },
-            lname:{
+            lName:{
                 type:DataTypes.STRING,
                 allowNull:false,
 
@@ -19,6 +19,10 @@ module.exports=(sequelize,DataTypes)=>{
             sex:{
                 type:DataTypes.STRING
 
+            },password:{
+                type:DataTypes.STRING,
+               allowNull:false,
+    
             }
         }
     );

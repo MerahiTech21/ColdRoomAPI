@@ -85,8 +85,8 @@ const update = async (req, res) => {
 //delete user
 
 const destroy = async (req, res) => {
-  let id = req.params.id;
-  await Employee.destroy({ where: { id: id } });
+  let id = req.params.id; 
+  await Employee.destroy({ where: { id: id } }); 
   res.status(200).send("deleted successfully");
   console.log("deleted");
 };
