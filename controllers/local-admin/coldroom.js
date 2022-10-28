@@ -1,0 +1,6 @@
+
+
+const setColdroomRent=(req,res)=>{
+
+}
+

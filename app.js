@@ -7,6 +7,9 @@ const db=require('./config/database.js');
 
 var indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
+const farmerRouter = require('./routes/farmer');
+const wholeSalerRouter = require('./routes/wholesaler');
+const localAdmin = require('./routes/local-admin');
 
 var app = express();
 
@@ -28,7 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/',adminRouter)
+app.use('/',adminRouter,farmerRouter,wholeSalerRouter,localAdmin)
 //app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
@@ -44,7 +47,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  // res.render('error');
 });
 
 module.exports = app;
