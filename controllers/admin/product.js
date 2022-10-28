@@ -8,7 +8,7 @@ const create=async((req,res)=>{
         name:req.body.name,
         imageUrl:req.body.imageUrl,
 
-        product.create(info),
+    
 
     },
     try{

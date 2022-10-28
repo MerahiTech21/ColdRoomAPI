@@ -4,10 +4,11 @@ const bcrypt = require("bcrypt");
 const Employee = db.employee;
 
 const create = async (req, res) => {
+  //decrease  
   var userInfo = {
     fName: req.body.fName,
     lName: req.body.lName,
-    phoneNumber: req.body.phoneNumber,
+    phoneNumber:req.body.phoneNumber,
     sex: req.body.sex,
     email: req.body.email,
     sex: req.body.sex,
