@@ -2,16 +2,16 @@ const Sequelize=require('sequelize');
 const DataTypes=require('sequelize');
 //const coldRoom = require('../models/coldRoom.js');
 
-// const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3308',});
-const sequelize= new Sequelize('merahitechnologi_cold_room','merahitechnologi_cold_room_user','C}LeGld72#_c',{dialect:'mysql',host:'merahitechnologies.com',port:'3306',});
+ //const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',});
+const sequelize= new Sequelize('merahitechnologi_cold_room_dayan','merahitechnologi_cold_room_user','C}LeGld72#_c',{dialect:'mysql',host:'merahitechnologies.com',port:'3306',});
   
 try {
-    sequelize.authenticate();
+   sequelize.authenticate();
    console.log('Sequelize Connection has been established successfully.');
  } catch (error) {
    console.error('Sequelize Unable to connect to the database:');
  }
- 
+     
  try{
  const db ={};
  db.sequelize=sequelize;
@@ -26,6 +26,7 @@ try {
  db.productType=require('../models/productType.js')(sequelize,DataTypes);
  db.coldRoomProduct=require('../models/coldRoomProduct.js')(sequelize,DataTypes);
  db.rent=require('../models/rent.js')(sequelize,DataTypes);
+ db.rent1=require('../models/rent.js')(sequelize,DataTypes);
  db.wholeSaler=require('../models/wholeSaler.js')(sequelize,DataTypes);
  db.order=require('../models/order.js')(sequelize,DataTypes);
  db.productTypePrice=require('../models/productTypePrice.js')(sequelize,DataTypes);
@@ -63,8 +64,12 @@ db.wholeSaler.belongsTo(db.address,{
  db.productType.belongsTo(db.product);
 
 
-//  db.rent.belongsTo(db.coldRoom);
-//  db.coldRoom.hasOne(db.rent);
+ db.rent.belongsTo(db.coldRoom,{
+  foreignKey:'coldRoomId',
+  as:'coldRoom'
+
+ });
+ db.coldRoom.hasOne(db.rent);
 db.order.belongsTo(db.coldRoom,{
   foreignKey:'coldRoomId',
   as:'coldRoom',
@@ -91,7 +96,7 @@ db.coldRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
 db.farmer.belongsToMany(db.productType,{through:db.farmerProduct})
 db.productType.belongsToMany(db.farmer,{through:db.farmerProduct})
 
-db.sequelize.sync({alter:true}).then(()=>{
+db.sequelize.sync({force:true}).then(()=>{
 
   // db.farmerProduct.sync({force:true}).then(()=>{})
     console.log('yes re-sync is done')

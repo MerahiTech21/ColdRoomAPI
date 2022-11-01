@@ -4,6 +4,8 @@ module.exports=(sequelize,DataTypes)=>{
             type:DataTypes.DOUBLE,
         }
 
-    })
+    })     
+       return rent
 
-}
+
+}  
