@@ -1,6 +1,5 @@
 module.exports=(sequelize,DataTypes)=>{
-
-    const coldRoom=sequelize.define('coldRoom',{
+    const OrderItem=sequelize.define('orderItem',{
         id:{
             type:DataTypes.INTEGER,
             autoIncrement: true,
@@ -8,25 +7,14 @@ module.exports=(sequelize,DataTypes)=>{
             allowNull:false,
 
         },
-
-        name:{
+        quantity:{
             type:DataTypes.STRING,
-            allowNull:false,
-
         },
-        longitude:{
+    
+        price:{
             type:DataTypes.DOUBLE,
-            allowNull:false,
         },
-        latitude:{
-            type:DataTypes.DOUBLE,
-            allowNull:false,
-        },
-
-
-
-    });
-    return coldRoom;
-
-
+    
+});
+return OrderItem;
 }

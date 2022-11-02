@@ -9,6 +9,11 @@ module.exports=(sequelize,DataTypes)=>{
         },
         phoneNumber:{
             type:DataTypes.STRING,
+            validate:{
+              unique:{
+                msg:'User Already Registed please Login'
+              }
+            },
             unique:true,
 
         },

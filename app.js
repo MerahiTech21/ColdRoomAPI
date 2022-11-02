@@ -5,11 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const db=require('./config/database.js');
 
+// importing router index file
 var indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
 const farmerRouter = require('./routes/farmer');
 const wholeSalerRouter = require('./routes/wholesaler');
-const localAdmin = require('./routes/local-admin');
+const localAdminRouter = require('./routes/local-admin');
 
 var app = express();
 
@@ -31,8 +32,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/',adminRouter,farmerRouter,wholeSalerRouter,localAdmin)
-//app.use('/', indexRouter);
+//registering router
+app.use('/admin',adminRouter)
+app.use('/farmer',farmerRouter)
+app.use('/wholesaler',wholeSalerRouter)
+app.use('/localadmin',localAdminRouter)
+app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

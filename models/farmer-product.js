@@ -32,14 +32,7 @@ module.exports =(sequelize,Datatypes)=>{
             type:Datatypes.INTEGER,
             allowNull:false
          },
-         productId:{
-            type:Datatypes.INTEGER,
-            allowNull:false,  
-            // references:{
-            //    model:'product',
-            //    key:'id'
-            // }
-         },
+ 
          warehousePosition:{
             type:Datatypes.STRING,
             allowNull:false
