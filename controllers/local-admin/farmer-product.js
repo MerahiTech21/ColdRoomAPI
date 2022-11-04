@@ -1,14 +1,9 @@
 const { db } = require("../../config/database");
 const bcrypt = require("bcrypt");
-const product = require("../../models/product");
-const productType = require("../../models/productType");
 const farmerProduct =db.farmerProduct;
 const {AddFarmer} = require("./farmer");
 const { fn } = require("sequelize");
 const coldRoomProduct = db.coldRoomProduct;
-
-const Farmer = db.farmer;
-const Address = db.address;
 
 const SaveFarmerProduct = async (req, res) => {
     // res.json(req.body.farmer)
@@ -21,10 +16,8 @@ const SaveFarmerProduct = async (req, res) => {
   } else {
     farmerId = req.body.farmerId;
   }
-
-  const crProduct=await coldRoomProduct.findOne({where:{productTypeId:req.body.productTypeId,coldRoomId:req.body.coldRoomId}})
-  const coldRoomProductPrice=crProduct.price
-
+ 
+ 
   const dataToSave = {
     coldRoomId: req.body.coldRoomId,
     ProductTypeId: req.body.productTypeId, 
@@ -35,7 +28,6 @@ const SaveFarmerProduct = async (req, res) => {
     currentQuantity:req.body.quantity ,
     quality: req.body.quality,
     warehousePosition: req.body.warehousePosition, 
-    pricePerKg: coldRoomProductPrice,
   };
 
   const fp=await farmerProduct.create(dataToSave);

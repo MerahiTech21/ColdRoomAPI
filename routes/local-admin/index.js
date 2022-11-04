@@ -1,8 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const {SaveFarmerProduct,getFarmerProduct, getProductDetail}=require('../../controllers/local-admin/farmer-product');
+const FarmerProductRouter=require('./farmer')
 
-router.post('/farmer_product',  SaveFarmerProduct);
-router.get('/farmer_product',  getFarmerProduct);
-router.get('/product_detail',  getProductDetail);
+router.use('/',  FarmerProductRouter);
+
 module.exports=router

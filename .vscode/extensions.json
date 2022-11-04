@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "kvcvc.sequelize-snippets"
+        "kvcvc.sequelize-snippets",
+        "SonarSource.sonarlint-vscode"
     ]
 }

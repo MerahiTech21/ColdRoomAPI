@@ -2,14 +2,17 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser')
+
 var logger = require('morgan');
 const db=require('./config/database.js');
 
+// importing router index file
 var indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
 const farmerRouter = require('./routes/farmer');
 const wholeSalerRouter = require('./routes/wholesaler');
-const localAdmin = require('./routes/local-admin');
+const localAdminRouter = require('./routes/local-admin');
 
 var app = express();
 
@@ -27,12 +30,21 @@ app.use((req,res,next)=>{
 })
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+app.use(express.urlencoded({ extended: true }));
+//app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/',adminRouter,farmerRouter,wholeSalerRouter,localAdmin)
-//app.use('/', indexRouter);
+//registering router
+app.use('/admin',adminRouter)
+app.use('/farmer',farmerRouter)
+app.use('/wholesaler',wholeSalerRouter)
+app.use('/localadmin',localAdminRouter)
+app.use('/', indexRouter);
+app.use('Images',express.static('Images'));
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -51,3 +63,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+ 
