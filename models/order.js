@@ -1,5 +1,9 @@
 module.exports=(sequelize,DataTypes)=>{
     const order=sequelize.define('order',{
+        orderCode:{
+            type:DataTypes.STRING,
+            unique:true
+        },
         orderStatus:{
             type:DataTypes.STRING,
         },

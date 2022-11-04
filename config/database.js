@@ -31,7 +31,10 @@ try {
  db.productTypePrice=require('../models/productTypePrice.js')(sequelize,DataTypes);
  db.farmerProduct=require('../models/farmer-product')(sequelize,DataTypes);
  db.OrderItem=require('../models/order-item')(sequelize,DataTypes);
-
+ db.OrderLog=require('../models/order-log')(sequelize,DataTypes);
+ db.OrderPaymentLog=require('../models/order-payment-log')(sequelize,DataTypes);
+ db.FarmerBalance=require('../models/farmer-balance')(sequelize,DataTypes);
+ db.FarmerRent=require('../models/farmer-rent')(sequelize,DataTypes)
 
 
 
@@ -103,10 +106,30 @@ db.order.hasMany(db.OrderItem)
 db.OrderItem.belongsTo(db.order)
 db.farmerProduct.hasMany(db.OrderItem)
 db.OrderItem.belongsTo(db.farmerProduct)
+/// order Log related
+db.order.hasMany(db.OrderLog);
+db.OrderLog.belongsTo(db.order)
+db.order.hasMany(db.OrderPaymentLog)
+db.OrderPaymentLog.belongsTo(db.order)
 
+//Farmer Balance nd Rent related
+db.FarmerBalance.belongsTo(db.OrderItem)
+db.FarmerBalance.belongsTo(db.farmer)
+db.farmer.hasMany(db.FarmerBalance)
+db.FarmerBalance.belongsTo(db.farmerProduct)
+
+db.FarmerRent.belongsTo(db.OrderItem)
+db.FarmerRent.belongsTo(db.farmer)
+db.farmer.hasMany(db.FarmerRent)
+
+db.FarmerRent.belongsTo(db.farmerProduct)
+
+
+ 
 db.sequelize.sync({sync:false}).then(()=>{
 
-//   db.OrderItem.sync({force:true}).then(()=>{})
+  //  db.FarmerBalance.sync({force:true}).then(()=>{})
+  //  db.FarmerRent.sync({force:true}).then(()=>{})
     console.log('yes re-sync is done')
 }).catch((err)=>{
   console.log('sequelize err bro',err);
@@ -116,5 +139,5 @@ db.sequelize.sync({sync:false}).then(()=>{
 
 module.exports ={db,sequelize};
  }catch(err){
- // console.log('seems database error',err)
+  console.log('seems database error',err)
  }
