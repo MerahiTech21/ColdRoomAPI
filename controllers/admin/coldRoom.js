@@ -19,25 +19,20 @@ const create= async(req,res)=>{
         name:req.body.name,
         latitude:req.body.latitude,
         longitude:req.body.longitude,  
-         
-
     };
+    res.send(ColdRoomInfo);
    
     let AddressInfo={  
       woreda:req.body.woreda,
       kebele:req.body.kebele,
       zone:req.body.zone,
       region:req.body.region,
-    
-
     };
     let rentInfo={
-        price:req.body.price,
-        
+        price:req.body.price,     
     };
     
     try{  
-
         //calling a function
     let Address= await createAddress(AddressInfo);
     ColdRoomInfo.addressId=Address.id;

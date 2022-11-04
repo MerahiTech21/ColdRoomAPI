@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
+var cors=require('cors');
 
 var logger = require('morgan');
 const db=require('./config/database.js');
@@ -20,17 +21,17 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use((req,res,next)=>{
-  res.setHeader('Access-Control-Allow-Origin','*');
-  res.setHeader('Access-Control-Allow-Methods','*');
-  res.setHeader('Access-Control-Allow-Headers','Authorization');
- // res.setHeader('Authorization','*');
-  next();
+// app.use((req,res,next)=>{
+//   res.setHeader('Access-Control-Allow-Origin','*');
+//   res.setHeader('Access-Control-Allow-Methods','*');
+//   res.setHeader('Access-Control-Allow-Headers','Authorization');
+//  // res.setHeader('Authorization','*');
+//   next();
 
-})
+// })
 app.use(logger('dev'));
 app.use(express.json());
-
+app.use(cors);
 app.use(express.urlencoded({ extended: true }));
 //app.use(bodyParser.urlencoded({ extended: true }));
 
