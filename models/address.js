@@ -5,6 +5,11 @@ module.exports=(sequelize,DataTypes)=>{
             allowNull:false,
 
         },
+        zone:{
+            type:DataTypes.STRING,
+            allowNull:false,
+
+        },
         woreda:{
             type:DataTypes.STRING,
             allowNull:false

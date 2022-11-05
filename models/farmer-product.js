@@ -32,7 +32,7 @@ module.exports =(sequelize,Datatypes)=>{
             type:Datatypes.INTEGER,
             allowNull:false
          },
- 
+       
          warehousePosition:{
             type:Datatypes.STRING,
             allowNull:false
@@ -42,4 +42,4 @@ module.exports =(sequelize,Datatypes)=>{
          }
     });
     return farmerProduct;
-}
+} 
