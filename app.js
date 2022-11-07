@@ -6,7 +6,7 @@ var bodyParser = require('body-parser')
 
 var logger = require('morgan');
 const db=require('./config/database.js');
-
+const cors=require('cors')
 // importing router index file
 var indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
@@ -28,6 +28,7 @@ app.set('view engine', 'jade');
 //   next();
 
 // })
+app.use(cors)
 app.use(logger('dev'));
 app.use(express.json());
  

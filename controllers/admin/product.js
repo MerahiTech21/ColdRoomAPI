@@ -4,6 +4,7 @@ const multer=require('multer');
 const path=require('path');
 const { nextTick } = require('process');
 const Product=db.product;
+const ProductType=db.productType;
 
 //add product
 const create= async(req,res)=>{
@@ -19,11 +20,23 @@ const create= async(req,res)=>{
 
     try{
         let product1= await Product.create(productInfo);
+        let types=[]
         if(product1){
-             
+              for(let i=1;i<=req.body.itemLength;i++){
+                const type={
+                    title:`${req.body.title}${i}`,
+                    description:`${req.body.description}${i}`,
+                    imageUrl:`${req.body.imageUrl}${i}`,
+                    productId:product1.id
+                }
+                types.push(type)
+              }
         }
 
-        res.status(200).send(product1);
+
+        const pType=ProductType.bulkCreate(types)
+
+        res.status(200).send({product1,pType});
 
     } catch(err){
         console.log('error db creation',err);

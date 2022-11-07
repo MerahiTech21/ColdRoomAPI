@@ -20,9 +20,8 @@ const create= async(req,res)=>{
         latitude:req.body.latitude,
         longitude:req.body.longitude,  
          
-
-    };
-   
+    }; 
+    
     let AddressInfo={  
       woreda:req.body.woreda,
       kebele:req.body.kebele,
@@ -73,8 +72,7 @@ const update=async(req,res)=>{
         name:req.body.name,
         latitude:req.body.latitude,
         longitude:req.body.longitude,  
-         
-
+    
     };
    
     let AddressInfo={  
@@ -91,8 +89,6 @@ const update=async(req,res)=>{
     };
 
     try{
-        
-     
      const updatedColdRoom=await ColdRoom.findOne({where:{id:req.params.id}});
      const addressId=updatedColdRoom.addressId;
       console.log(addressId);
