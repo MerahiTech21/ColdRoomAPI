@@ -43,17 +43,30 @@ const SaveFarmerProduct = async (req, res) => {
 };
 
 const getFarmersProducts =async(req,res)=>{
-  const fp=await farmerProduct.findAll({
-   attributes:['productId',[db.sequelize.fn('sum',db.sequelize.col('oldQuantity')),'totalProduct'],   
- ],
- include:[{
-   model:db.product ,
-   attributes:['name','imageUrl']
- }],
-   group:['productId'],
+
+  try {
+    const coldRoomId=req.user.coldRoomId
+
+    if (!coldRoomId) {
+      res.status(404).json('Error ')
+
+    }
+    const fp=await farmerProduct.findAll({
+      where:{coldRoomId:coldRoomId},
+     attributes:['productId',[db.sequelize.fn('sum',db.sequelize.col('oldQuantity')),'totalProduct'],   
+   ],
+   include:[{
+     model:db.product ,
+     attributes:['name','imageUrl']
+   }],
+     group:['productId'],
+    
+    });
+    res.json(fp)   
+  } catch (error) {
+    res.status(404).json('Error ')
+  }
   
-  });
-  res.json(fp) 
 }
 
 const getProductDetail =async(req,res)=>{

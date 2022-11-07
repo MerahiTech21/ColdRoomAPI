@@ -3,7 +3,7 @@ const DataTypes=require('sequelize');
 //const coldRoom = require('../models/coldRoom.js');
 
  //const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',});
-const sequelize= new Sequelize('merahitechnologi_cold_room_dayan','merahitechnologi_cold_room_user','C}LeGld72#_c',{dialect:'mysql',host:'merahitechnologies.com',port:'3306',});
+const sequelize= new Sequelize('merahitechnologi_cold_room','merahitechnologi_cold_room_user','C}LeGld72#_c',{dialect:'mysql',host:'merahitechnologies.com',port:'3306',});
   
 try {
    sequelize.authenticate();
@@ -124,6 +124,11 @@ db.farmer.hasMany(db.FarmerRent)
 
 db.FarmerRent.belongsTo(db.farmerProduct)
 
+db.coldRoom.hasMany(db.FarmerBalance)
+db.FarmerBalance.belongsTo(db.coldRoom)
+
+db.coldRoom.hasMany(db.FarmerRent)
+db.FarmerRent.belongsTo(db.coldRoom)
 
  
 db.sequelize.sync({force:false}).then(()=>{

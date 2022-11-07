@@ -1,44 +1,49 @@
 const { db } = require("../../config/database");
 
 const FarmerRent = db.FarmerRent;
-const Farmer=db.farmer
+const Farmer = db.farmer;
 
 const getFarmerRent = async (req, res) => {
   try {
-    const farmerB = await FarmerRent.findOne({
+    const farmerRents = await FarmerRent.findAll({
       where: { farmerId: req.params.id },
-      include:[{
-        model:Farmer ,
-         attributes:['fName','lName']
-      },{
-        model:db.OrderItem ,
-        include:db.order
-        // attributes:['title','imageUrl'] 
-      },{
-        model:db.farmerProduct ,
-        include:[db.product,db.productType]
-        // attributes:['title','imageUrl'] 
-      }
-    ]
+      include: [
+        {
+          model: Farmer,
+          attributes: ["fName", "lName"],
+        },
+        {
+          model: db.OrderItem,
+          include: db.order,
+          // attributes:['title','imageUrl']
+        },
+        {
+          model: db.farmerProduct,
+          include: [db.product, db.productType],
+          // attributes:['title','imageUrl']
+        },
+      ],
     });
-   
-    const formatedData={ 
-      farmer:farmerB.farmer,
-      orderCode:farmerB.orderItem.order.orderCode,
-      rentPrice:farmerB.rentPrice,
-      orderDate:farmerB.orderItem.order.createdAt,
-      productName:farmerB.farmerProduct.Product.name,
-      productType:farmerB.farmerProduct.ProductType.title,
-      quantity:farmerB.quantity,
-      state:farmerB.state,
-      rentAmount:farmerB.rentAmount
-     
-    }
-    res.json(formatedData); 
+
+    let farmer = {};
+    const newfarmerRents = farmerRents.map((farmerRent) => {
+      farmer = farmerRent.farmer;
+
+      return {
+        orderCode: farmerRent.orderItem.order.orderCode,
+        rentPrice: farmerRent.rentPrice,
+        orderDate: farmerRent.orderItem.order.createdAt,
+        productName: farmerRent.farmerProduct?.Product.name,
+        productType: farmerRent.farmerProduct?.ProductType.title,
+        quantity: farmerRent.quantity,
+        state: farmerRent.state,
+        rentAmount: farmerRent.rentAmount,
+      };
+    });
+    res.json({farmer,newfarmerRents});
   } catch (error) {
-    res.status(400).json('Error While Fetching'+error);
+    res.status(400).json("Error While Fetching" + error);
+  }
+};
 
-  } 
-}; 
-
-module.exports={getFarmerRent}
+module.exports = { getFarmerRent };

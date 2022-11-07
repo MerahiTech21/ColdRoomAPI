@@ -2,7 +2,8 @@ const {db}=require('../../config/database');
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken');
 const Employee = db.employee;
-const Account = db.account;
+const ColdRoom = db.coldRoom;
+
 require('dotenv').config()
 
 const Login=async (req,res)=>{
@@ -20,9 +21,22 @@ const Login=async (req,res)=>{
      if(! valide ){
         res.status(401).json("Email or Password Incorrect!")
     }
+    if(employee.role === 'admin'){
+      const token= jwt.sign({id:employee.id,email},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
+      res.status(200).json({id:employee.id,email:employee.email,token:token})
+    }else{
+      const coldRoom=await ColdRoom.findOne({where:{employeeId:employee.id}})
+      if(coldRoom){
+        
+      const token= jwt.sign({id:employee.id,email,coldRoomId:employee.co},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
+      res.status(200).json({id:employee.id,email:employee.email,token:token})
+      }else{
+        res.status(403).json("Un Authorized!")
 
-    const token= jwt.sign({id:employee.id,email},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
-    res.status(200).json({id:employee.id,email:employee.email,token:token})
+      }
+
+    }
+  
 
   }catch(err){
     res.json(err) 

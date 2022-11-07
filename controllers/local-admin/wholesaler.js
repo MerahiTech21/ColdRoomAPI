@@ -6,11 +6,18 @@ const WholeSaler=db.wholeSaler
 const Order =db.order
 const getWholeSalers = async (req, res) => {
   try {
+    const coldRoomId=req.user.coldRoomId
+
+    if (!coldRoomId) {
+      res.status(404).json('Error ')
+
+    }
     const wSalers = await WholeSaler.findAll({
 
         include:[
             {
                 model:Order,
+                where:{coldRoomId:coldRoomId},
                // attributes:[]
             }
         ] 

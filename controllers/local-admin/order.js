@@ -14,9 +14,16 @@ const FarmerRent = db.FarmerRent;
 
 const getOrders = async (req, res) => {
   try {
-    const orders = await Order.findAll({
-      attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },
 
+    const coldRoomId=req.user.coldRoomId
+
+    if (!coldRoomId) {
+      res.status(404).json('Error ')
+
+    }
+    const orders = await Order.findAll({
+      where:{coldRoomId:coldRoomId}, 
+      attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },
       include: [
         {
           model: WholeSaler,
