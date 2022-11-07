@@ -7,7 +7,7 @@ module.exports=(sequelize,DataTypes)=>{
         },
         zone:{
             type:DataTypes.STRING,
-            allowNull:false,
+            allowNull:true,
 
         },
         woreda:{

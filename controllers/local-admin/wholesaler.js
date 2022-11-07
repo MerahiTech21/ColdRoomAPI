@@ -15,8 +15,27 @@ const getWholeSalers = async (req, res) => {
             }
         ] 
     }) 
-    res.status(200).json(newRent);
+    res.status(200).json(wSalers);
   } catch (error) {
     throw error
   }
 };
+
+const getWholeSalerOrders = async (req, res) => {
+  try {
+    const wSaler = await WholeSaler.findOne({
+
+         where:{id:req.params.id},
+        include:[
+            {
+                model:Order,
+               // attributes:[]
+            }
+        ] 
+    }) 
+    res.status(200).json(wSaler);
+  } catch (error) {
+    throw error
+  }
+};
+

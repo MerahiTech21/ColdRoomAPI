@@ -20,7 +20,6 @@ const create= async(req,res)=>{
         latitude:req.body.latitude,
         longitude:req.body.longitude,  
     };
-    res.send(ColdRoomInfo);
    
     let AddressInfo={  
       woreda:req.body.woreda,

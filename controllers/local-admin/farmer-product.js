@@ -42,7 +42,7 @@ const SaveFarmerProduct = async (req, res) => {
 }
 };
 
-const getFarmerProduct =async(req,res)=>{
+const getFarmersProducts =async(req,res)=>{
   const fp=await farmerProduct.findAll({
    attributes:['productId',[db.sequelize.fn('sum',db.sequelize.col('oldQuantity')),'totalProduct'],   
  ],
@@ -57,45 +57,28 @@ const getFarmerProduct =async(req,res)=>{
 }
 
 const getProductDetail =async(req,res)=>{
-  const fp=await farmerProduct.findAll({
-    attributes:['productId'],
- include:[,{
-  model:db.farmer ,
-   attributes:['fName','lName']
-},{
-  model:db.productType ,
-   attributes:['name','imageUrl']
-}
-],
-  //  group:['createdAt'],
-  
-  });
-  res.json(fp) 
+
+  try {
+    const fp=await farmerProduct.findAll({
+      //attributes:['productId'],
+   where:{productId:req.params.id},
+   include:[{
+    model:db.farmer ,
+     attributes:['fName','lName']
+  },{
+    model:db.productType ,
+     attributes:['title','imageUrl'] 
+  }
+  ],
+    //  group:['createdAt'], 
+    
+    });
+    res.json(fp) 
+  } catch (error) {
+    console.log("Error "+error)
+  }
+ 
 }
 
-// const ProductDetail = async (req, res) => {
-//   let productId = req.params.id;
-//   const farmerProducts = Farmer.findAll({
-//     include: {
-//       model: product,
-//       where: { id: productId },
-//       include: productType,
-//     },
-//   });
-//   const dataToSend=farmerProducts.map((farmer)=>{
-//     const data ={
-//         farmerName:farmer.fName + farmer.lName
-//     }
-//     data.products=farmer.products.map((product)=>{
-//          const prod = {
-//             productSku:product.name
-//           }
-//           prod.typs=product.productTypes.map((pType)={
-//             return {
-                
-//             }
-//           })
-//     })
-//   })
-// };
-module.exports={SaveFarmerProduct,getFarmerProduct,getProductDetail}
+
+module.exports={SaveFarmerProduct,getFarmersProducts,getProductDetail}

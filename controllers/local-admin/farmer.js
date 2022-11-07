@@ -3,6 +3,9 @@ const bcrypt = require("bcrypt");
 
 const Farmer = db.farmer;
 const Address = db.address;
+const FarmerBalance=db.FarmerBalance
+const FarmerRent= db.FarmerRent
+const FarmerProduct=db.farmerProduct
 
 const AddFarmer=async(farmerData)=>{
 
@@ -45,7 +48,76 @@ const AddFarmer=async(farmerData)=>{
       return newaddress.id;
     };
 
-    const getFarmerRent=(req,res)=>{
-    
+    const getFarmerProductHistory=async(req,res)=>{
+      const fp=await farmerProduct.findAll({
+        where:{farmerId:req.params.id},
+        attributes:['productId'],
+     include:[,{
+      model:db.farmer ,
+       attributes:['fName','lName']
+    },{
+      model:db.productType ,
+       attributes:['name','imageUrl']
     }
-module.exports={AddFarmer}
+    ],
+      //  group:['createdAt'],
+      
+      });
+      res.json(fp)
+    }
+
+ 
+const getFarmers=async(req,res)=>{
+ 
+  try {
+    
+  const farmers=await Farmer.findAll({
+
+    include:[
+      {
+        model:FarmerBalance,
+ 
+      },
+      {
+        model:FarmerRent,
+
+      }, {
+        model:Address,
+        as:'address'
+
+      }, {
+        model:FarmerProduct,
+
+        
+      }
+    ],       
+    //  group:['farmer.id','farmerBalances.farmerId','farmerRents.farmerId'],
+      // raw:true
+
+  })
+  //console.log('far',farmers)
+
+  const arrangedFarmers=farmers.map((farmer)=>{
+
+    return {
+          fullName:farmer.fName+ ' '+farmer.lName,
+          location:farmer.address.woreda,
+          totalProduct:farmer.farmerProducts.reduce((total,product)=>{
+            return total+product.oldQuantity
+          },0),
+          totalBalance:farmer.farmerBalances.reduce((sum,balance)=>{
+             return sum+balance.balanceAmount
+          },0.0),
+          totalRent:farmer.farmerRents.reduce((sum,rent)=>{
+            return sum+rent.rentAmount
+         },0.0),
+    }
+  })
+   res.json(arrangedFarmers)
+
+  } catch (error) {
+   res.json(''+error) 
+  }
+}
+
+module.exports={AddFarmer,getFarmerProductHistory,getFarmers}

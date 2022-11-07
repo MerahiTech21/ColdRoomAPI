@@ -13,10 +13,11 @@ const placeOrder = async (req, res) => {
   try {
     const orderData = {
       wholeSalerId: req.body.wholeSalerId,
-      paymentStatus: "unpayed",
+      paymentStatus: "Unpaid",
       coldRoomId: req.body.coldRoomId,
       orderStatus: "pending",
       paidAmount: 0,
+      orderCode:Math.floor(Math.random()*1000 +100)
     };
 
     const orderItems = req.body.orderItems;
@@ -151,7 +152,7 @@ const placeOrder = async (req, res) => {
         }
       }
     }
- 
+  
     try {    
            //creating order and order Item
          const newOrder = await Order.create(orderData);
@@ -176,30 +177,5 @@ const placeOrder = async (req, res) => {
   }
 };
 
-const getOrders=async(req,res)=>{
-  try{ 
-     const orders=await Order.findAll({include:WholeSaler});
-     res.status(200).json(orders);
 
-     
-  }catch(err){
-    res.status(400).json('Error While Fetching  Orders')
-
-   }
-
-
-}
-
-const getOrder=async(req,res)=>{
-
-  try{ 
-    const orders=await Order.findOne({include:[{model:WholeSaler},{OrderItem}]});
-    res.status(200).json(orders);
-
-    
- }catch(err){
-   res.status(400).json('Error While Fetching  Orders')
-
-  }
-}
 module.exports = { placeOrder };

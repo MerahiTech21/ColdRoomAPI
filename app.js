@@ -20,21 +20,21 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+//app.use(cors);
 
-// app.use((req,res,next)=>{
-//   res.setHeader('Access-Control-Allow-Origin','*');
-//   res.setHeader('Access-Control-Allow-Methods','*');
-//   res.setHeader('Access-Control-Allow-Headers','Authorization');
-//  // res.setHeader('Authorization','*');
-//   next();
+app.use((req,res,next)=>{
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Methods','*');
+  res.setHeader('Access-Control-Allow-Headers','Authorization');
+ // res.setHeader('Authorization','*');
+  next();
 
-// })
+})
 app.use(logger('dev'));
 app.use(express.json());
-app.use(cors);
 app.use(express.urlencoded({ extended: true }));
 //app.use(bodyParser.urlencoded({ extended: true }));
-
+ 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
