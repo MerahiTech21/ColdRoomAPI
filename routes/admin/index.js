@@ -7,6 +7,9 @@ const ValidateToken = require('../../middelware/validation/validate-token');
 const ProductRouter=require('./product');
 const ColdRoomRouter=require('./coldRoom');
 const AddressRouter=require('./address');
+const FarmerRouter=require('./farmer');
+const OrderRouter=require('./order')
+const CRoomProductRouter=require('./coldroom-product')
 
 
 
@@ -16,6 +19,10 @@ router.use('/auth',AuthRouter);
 router.use('/products',ProductRouter);
 router.use('/coldRooms',ColdRoomRouter);
 router.use('/address',AddressRouter);
+router.use('/farmers',FarmerRouter);
+router.use('/orders',OrderRouter);
+router.use('/coldroom-products',CRoomProductRouter);
+
 
 
 

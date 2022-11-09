@@ -28,10 +28,10 @@ module.exports =(sequelize,Datatypes)=>{
          //    type:Datatypes.DOUBLE,
          //    allowNull:false
          // },
-         coldRoomId:{
-            type:Datatypes.INTEGER,
-            allowNull:false
-         },
+         // coldRoomId:{
+         //    type:Datatypes.INTEGER,
+         //    allowNull:false
+         // },
        
          warehousePosition:{
             type:Datatypes.STRING,

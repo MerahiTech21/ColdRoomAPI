@@ -1,75 +1,93 @@
-const { request } = require('express');
 const {db}=require('../../config/database.js');
-const multer=require('multer');
-const path=require('path');
-const { nextTick } = require('process');
+
+const FarmerProduct =db.farmerProduct;
+
 const Product=db.product;
 const ProductType=db.productType;
 
 //add product
 const create= async(req,res)=>{
     
-    console.log(req.file);
-   // res.send('done');
+ 
+   const  productImage= req.files.filter((file)=>{
+       return file.fieldname === 'product_image'
+    }) 
+
+    const typeImage=req.files.filter((file)=>{
+        return file.fieldname !== 'product_image'
+     })
+       
     let productInfo={
         name:req.body.name,
-        imageUrl:req.file.path,
-           
+        imageUrl:productImage[0].filename,
+            
     };
    
-
     try{
-        let product1= await Product.create(productInfo);
+        let newProduct= await Product.create(productInfo);
         let types=[]
-        if(product1){
-              for(let i=1;i<=req.body.itemLength;i++){
+        if(newProduct){
+              for(let i=0;i<typeImage.length;i++){
+
+                
                 const type={
-                    title:`${req.body.title}${i}`,
-                    description:`${req.body.description}${i}`,
-                    imageUrl:`${req.body.imageUrl}${i}`,
-                    productId:product1.id
+                    title:req.body['title'+i],
+                    description:req.body['description'+i],
+                    imageUrl:`${typeImage[i].filename}`,
+                    productId:newProduct.id
                 }
+
+              
                 types.push(type)
               }
-        }
+        } 
+   
+      
+        const pType= await ProductType.bulkCreate(types)
+
+         res.status(200).json({newProduct,pType});
+
+}catch(err){
+    console.log('err')
+    res.status(400).json('Error'+err);
+
+}
+}
 
 
-        const pType=ProductType.bulkCreate(types)
-
-        res.status(200).send({product1,pType});
-
-    } catch(err){
-        console.log('error db creation',err);
-    };
-};
-
-//uploading immage
-const storage=multer.diskStorage({
-    destination:(req,file,cb)=>{
-        cb(null,'Images');
-    },
-    filename:(req,file,cb)=>{
-        cb(null,new Date().toISOString().replace(/:/g,'-')+ path.extname(file.originalname));
-    }
-});
-const upload=multer({
-    storage:storage,
-    limits:{fieldNameSize:'50000000'},
-    fileFilter:(req,file,cb)=>{
-        const fileType=/jpeg|jpg|png|gif/
-        const mimeType=fileType.test(file.mimetype)
-        const extname=fileType.test(path.extname(file.originalname));
-        if(mimeType && extname){
-            return cb(null,true);
-        }
-        cb('give proper files format to upload');
-    }
-}).single('imageUrl');
-
-module.exports={
-    upload,
-    create,
+const getAll=async(req,res)=>{
+    try {
+        // const coldRoomId=req.user.coldRoomId
     
+        // if (!coldRoomId) {
+        //   res.status(404).json('Error ')
+    
+        // }
+        const fp=await FarmerProduct.findAll({
+        //   where:{coldRoomId:coldRoomId},
+         attributes:['productId',[db.sequelize.fn('sum',db.sequelize.col('oldQuantity')),'totalProduct'],   
+       ],
+       include:[
+        {
+         model:db.product ,
+         attributes:['name','imageUrl']
+       },  {
+        model:db.coldRoom ,
+        attributes:['id','name']
+      }
+    ],
+         group:['productId'],
+        
+        });
+        res.json(fp)   
+      } catch (error) {
+        res.status(404).json('Error ')
+      }
+}
+module.exports={
+  
+    create,
+     getAll
 };
 
 

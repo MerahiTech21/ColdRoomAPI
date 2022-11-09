@@ -8,12 +8,9 @@ const Address=db.address;
 const findAll= async(req,res)=>{
     let address1=await Address.findAll();
     return res.send(address1);
-
-
-
 }
-
+     
 module.exports={
-    findAll
+    findAll 
 
-}
+} 

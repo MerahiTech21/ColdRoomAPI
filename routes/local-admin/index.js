@@ -7,7 +7,7 @@ const FarmerRentRouter=require('./farmer-rent')
 const FarmerRouter=require('./farmer')
 const RevenueRouter=require('./revenue')
 const SalesRouter=require('./sales')
-router.use('/farmer-product', FarmerProductRouter);
+router.use('/farmer-products', FarmerProductRouter);
 router.use('/orders',OrderRouter)
 router.use('/farmer-balance',FarmerBalanceRouter)
 router.use('/farmer-rent',FarmerRentRouter)

@@ -27,7 +27,7 @@ const Login=async (req,res)=>{
     }else{
       const coldRoom=await ColdRoom.findOne({where:{employeeId:employee.id}})
       if(coldRoom){
-        
+         
       const token= jwt.sign({id:employee.id,email,coldRoomId:employee.co},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
       res.status(200).json({id:employee.id,email:employee.email,token:token})
       }else{

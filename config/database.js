@@ -130,6 +130,8 @@ db.FarmerBalance.belongsTo(db.coldRoom)
 db.coldRoom.hasMany(db.FarmerRent)
 db.FarmerRent.belongsTo(db.coldRoom)
 
+db.coldRoom.hasMany(db.farmerProduct);
+db.farmerProduct.belongsTo(db.coldRoom)
  
 db.sequelize.sync({force:false}).then(()=>{
 

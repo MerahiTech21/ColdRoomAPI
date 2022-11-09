@@ -1,9 +1,9 @@
 const { db } = require("../../config/database");
 const bcrypt = require("bcrypt");
-const farmerProduct =db.farmerProduct;
+const FarmerProduct =db.farmerProduct;
 const {AddFarmer} = require("./farmer");
 const { fn } = require("sequelize");
-const coldRoomProduct = db.coldRoomProduct;
+const ColdRoomProduct = db.coldRoomProduct;
 
 const SaveFarmerProduct = async (req, res) => {
     // res.json(req.body.farmer)
@@ -30,7 +30,7 @@ const SaveFarmerProduct = async (req, res) => {
     warehousePosition: req.body.warehousePosition, 
   };
 
-  const fp=await farmerProduct.create(dataToSave);
+  const fp=await FarmerProduct.create(dataToSave);
   //farmer.addProductType(product, { through: { dataToSave } });
 
   //console.log(fp.stringfy())
@@ -45,14 +45,14 @@ const SaveFarmerProduct = async (req, res) => {
 const getFarmersProducts =async(req,res)=>{
 
   try {
-    const coldRoomId=req.user.coldRoomId
+    // const coldRoomId=req.user.coldRoomId
 
-    if (!coldRoomId) {
-      res.status(404).json('Error ')
+    // if (!coldRoomId) {
+    //   res.status(404).json('Error ')
 
-    }
-    const fp=await farmerProduct.findAll({
-      where:{coldRoomId:coldRoomId},
+    // }
+    const fp=await FarmerProduct.findAll({
+      // where:{coldRoomId:coldRoomId},
      attributes:['productId',[db.sequelize.fn('sum',db.sequelize.col('oldQuantity')),'totalProduct'],   
    ],
    include:[{
@@ -72,7 +72,7 @@ const getFarmersProducts =async(req,res)=>{
 const getProductDetail =async(req,res)=>{
 
   try {
-    const fp=await farmerProduct.findAll({
+    const fp=await FarmerProduct.findAll({
       //attributes:['productId'],
    where:{productId:req.params.id},
    include:[{
