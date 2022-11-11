@@ -1,5 +1,5 @@
 module.exports=(sequelize,DataTypes)=>{
-    const productType=sequelize.define("ProductType",
+    const productType=sequelize.define("productType",
     {
         id:{
             type:DataTypes.INTEGER,
@@ -14,6 +14,10 @@ module.exports=(sequelize,DataTypes)=>{
         imageUrl:{
             type:DataTypes.STRING,
             allowNull:false,
+            get() {
+                const rawValue = this.getDataValue('imageUrl');
+                return rawValue ? process.env.BASE_URL+'/images/'+rawValue : null;
+              }
 
         },
         description:{

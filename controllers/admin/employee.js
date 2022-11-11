@@ -53,7 +53,14 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    let employees = await Employee.findAll({ attributes: { exclude: ["password"] } });
+    let employees = await Employee.findAll({ attributes: { exclude: ["password"] },
+    include:[
+      {
+       model:db.coldRoom,
+        attributes:['id','name']
+      }
+    ]
+  });
     res.status(200).json(employees);
     console.log(employees);
   } catch (err) {
@@ -63,7 +70,15 @@ const getAll = async (req, res) => {
 
 const getOne = async (req, res) => {
   let id = req.params.id;
-  let employee = await Employee.findOne({ where: { id: id } });
+  let employee = await Employee.findOne({ where: { id: id } ,
+    include:[
+      {
+       model:db.coldRoom,
+        attributes:['id','name']
+      }
+    ]
+
+  });
   if(! employee){
     res.status(404).json('Employee Not FOund')
   }
@@ -77,7 +92,14 @@ const update = async (req, res) => {
   let id = req.params.id;
   let employee = await Employee.update(req.body, { where: { id: id } });
   if (employee) {
-    res.status(200).send(await Employee.findOne({ where: { id: id } }));
+    res.status(200).send(await Employee.findOne({ where: { id: id } ,
+      include:[
+        {
+         model:db.coldRoom,
+          attributes:['id','name']
+        }
+      ]
+    }));
   }
   console.log(employee);
 };
