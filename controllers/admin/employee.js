@@ -11,7 +11,6 @@ const create = async (req, res) => {
     phoneNumber:req.body.phoneNumber,
     sex: req.body.sex,
     email: req.body.email,
-    sex: req.body.sex,
     role: req.body.role, 
   };
 
