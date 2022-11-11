@@ -1,4 +1,9 @@
-- name: FTP Deployer
+on:
+   push:
+      branches:
+         -main
+
+  name: FTP Deployer
   uses: sand4rt/ftp-deployer@v1.5
   with:
     sftp: false # optional
