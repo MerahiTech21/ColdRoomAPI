@@ -4,20 +4,22 @@ const {db} = require("../../config/database");
 
 const WholeSaler=db.wholeSaler
 const Order =db.order
+
 const getWholeSalers = async (req, res) => {
   try {
-    const coldRoomId=req.user.coldRoomId
+    // const coldRoomId=req.user.coldRoomId
 
-    if (!coldRoomId) {
-      res.status(404).json('Error ')
+    // if (!coldRoomId) {
+    //   res.status(404).json('Error ')
 
-    }
+    // }
     const wSalers = await WholeSaler.findAll({
 
         include:[
             {
-                model:Order,
-                where:{coldRoomId:coldRoomId},
+                model:db.address,
+                as:'address'
+                // where:{coldRoomId:coldRoomId},
                // attributes:[]
             }
         ] 
@@ -36,6 +38,12 @@ const getWholeSalerOrders = async (req, res) => {
         include:[
             {
                 model:Order,
+                  include:{
+                  model: db.coldRoom,
+                  as:'coldRoom',
+                   attributes: ["id","name"],
+                  // include:[{model:Address,as:'address'}]
+                },
                // attributes:[]
             }
         ] 

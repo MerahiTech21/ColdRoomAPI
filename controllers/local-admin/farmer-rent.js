@@ -33,14 +33,14 @@ const getFarmerRent = async (req, res) => {
         orderCode: farmerRent.orderItem.order.orderCode,
         rentPrice: farmerRent.rentPrice,
         orderDate: farmerRent.orderItem.order.createdAt,
-        productName: farmerRent.farmerProduct?.Product.name,
-        productType: farmerRent.farmerProduct?.ProductType.title,
+        productName: farmerRent.farmerProduct?.product.name,
+        productType: farmerRent.farmerProduct?.productType.title,
         quantity: farmerRent.quantity,
         state: farmerRent.state,
         rentAmount: farmerRent.rentAmount,
       };
     });
-    res.json({farmer,newfarmerRents});
+    res.json({farmer,farmerRents:newfarmerRents});
   } catch (error) {
     res.status(400).json("Error While Fetching" + error);
   }

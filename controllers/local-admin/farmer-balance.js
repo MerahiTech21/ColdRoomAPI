@@ -30,15 +30,15 @@ const getFarmerBalance = async (req, res) => {
       orderCode:farmerBalance.orderItem.order.orderCode,
       price:farmerBalance.orderItem.price,
       orderDate:farmerBalance.orderItem.order.createdAt,
-      productName:farmerBalance.farmerProduct?.Product.name,
-      productType:farmerBalance.farmerProduct?.ProductType.title,
+      productName:farmerBalance.farmerProduct?.product.name,
+      productType:farmerBalance.farmerProduct?.productType.title,
       quantity:farmerBalance.quantity,
       state:farmerBalance.state,
       balanceAmount:farmerBalance.balanceAmount
      
-    }
+    }   
   })
-    res.json({farmer,newFarmerBalances}); 
+    res.json({farmer,farmerBalances:newFarmerBalances}); 
   } catch (error) {
     res.status(400).json('Error While Fetching'+error);
 

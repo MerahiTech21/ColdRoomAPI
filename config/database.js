@@ -51,9 +51,13 @@ db.coldRoom.belongsTo(db.address,{
 
 // });
 db.coldRoom.belongsTo(db.employee,{
-  foreignKey:'employeeId',
-  as:'employee'
+ // foreignKey:'employeeId',
+//  as:'employee'
 });
+
+db.employee.hasOne(db.coldRoom)
+
+
  db.farmer.belongsTo(db.address,{
   foreignKey:'addressId',
   as:'address'
@@ -117,11 +121,11 @@ db.FarmerBalance.belongsTo(db.OrderItem)
 db.FarmerBalance.belongsTo(db.farmer)
 db.farmer.hasMany(db.FarmerBalance)
 db.FarmerBalance.belongsTo(db.farmerProduct)
-
+   
 db.FarmerRent.belongsTo(db.OrderItem)
 db.FarmerRent.belongsTo(db.farmer)
 db.farmer.hasMany(db.FarmerRent)
-
+ 
 db.FarmerRent.belongsTo(db.farmerProduct)
 
 db.coldRoom.hasMany(db.FarmerBalance)

@@ -7,8 +7,14 @@ module.exports =(sequelize,Datatypes)=>{
          },
          imageUrl:{
             type:Datatypes.STRING,
-            allowNull:false
+            allowNull:false,
+            get() {
+              const rawValue = this.getDataValue('imageUrl');
+              return rawValue ? process.env.BASE_URL+'/images/'+rawValue : null;
+            }
+
          }
+         
     });
     return product;
 }

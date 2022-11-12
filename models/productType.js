@@ -14,6 +14,10 @@ module.exports=(sequelize,DataTypes)=>{
         imageUrl:{
             type:DataTypes.STRING,
             allowNull:false,
+            get() {
+                const rawValue = this.getDataValue('imageUrl');
+                return rawValue ? process.env.BASE_URL+'/images/'+rawValue : null;
+              }
 
         },
         description:{
