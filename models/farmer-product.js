@@ -24,10 +24,10 @@ module.exports =(sequelize,Datatypes)=>{
             type:Datatypes.DOUBLE, 
             allowNull:false
          },
-         // pricePerKg:{ //this field come from current cold room product price
-         //    type:Datatypes.DOUBLE,
-         //    allowNull:false
-         // },
+         pricePerKg:{ //this field come from current cold room product price
+            type:Datatypes.DOUBLE,
+            allowNull:false
+         },
          // coldRoomId:{
          //    type:Datatypes.INTEGER,
          //    allowNull:false
