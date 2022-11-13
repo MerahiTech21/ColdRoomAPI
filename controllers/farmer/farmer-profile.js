@@ -15,9 +15,45 @@ const getProfile=async(req,res)=>{
     const profile=await Farmer.findByPk(req.params.id,{attributes:{exclude:['password','createdAt','updatedAt']}});
     res.json(profile);
     
+}
+
+const changePhoneNumber=async(req,res)=>{
+    try{
+      const farmer=await Farmer.findByPk(req.params.id);
+      farmer.phoneNumber=req.body.phoneNumber;
+
+       await farmer.save();
+        res.status(200).json(farmer);
+
+    }catch(err){
+     res.json(err);
+    }
+   
+
+}
+
+
+const changePassword=async(req,res)=>{
+    try{
+      const farmer=await Farmer.findByPk(req.params.id);
+      //res.status(200).json(farmer);
+
+      let encryptedPassword = await bcrypt.hash(req.body.password,10);
+      farmer.password=encryptedPassword;  
+      //res.status(200).json(farmer);
+
+       await farmer.save();
+       res.status(200).json(farmer);
+
+    }catch(err){
+     res.json(err);
+    }
+   
 
 }
 
 module.exports={
-    getProfile
+    getProfile,
+    changePhoneNumber,
+    changePassword
 }
