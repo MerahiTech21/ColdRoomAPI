@@ -1,7 +1,7 @@
 const { request } = require("express");
 const { db } = require("../../config/database.js");
-const multer = require("multer");
 const path = require("path");
+const Op=db.Sequelize.Op
 
 const ColdRoom = db.coldRoom;
 const Address = db.address;
@@ -157,7 +157,11 @@ const update = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     // const procount=Produ
+    const search=req.query.search
+    var searchCondition = search ?  {name: { [Op.like]: `%${search}%` }} : null;
+
     const coldRooms = await ColdRoom.findAll({
+      where:searchCondition,
       attributes: {
         include: [
           [
@@ -197,8 +201,20 @@ const getAll = async (req, res) => {
   }
 };
 
+const getAllColdroomName=async(req,res)=>{
+  
+     try {
+         const coldrooms=await ColdRoom.findAll({
+      attributes:['id','name']
+     })
+     res.json(coldrooms)
+     } catch (error) {
+      res.status(400).json("Error "+error)
+     }
+}
 module.exports = {
   create,
   update,
   getAll,
+  getAllColdroomName
 };

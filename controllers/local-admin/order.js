@@ -53,8 +53,6 @@ const getOrder = async (req, res) => {
   }
 };
 
-const filterOrder = async (req, res) => {};
-const searchOrder = async (req, res) => {};
 
 const updateOrderStatus = async (req, res) => {
   try {
@@ -78,7 +76,7 @@ const updateOrderStatus = async (req, res) => {
           orderId: orderId,
         });
 
-        if (order.orderStatus === "Completed") {
+        if (order.orderStatus === "completed") {
           console.log('completed1')
          await setFarmerBalance(order);
          console.log('completed2')
@@ -110,7 +108,7 @@ const setFarmerBalance = async (order) => {
         orderItemId: orderItem.id,
         quantity: orderItem.quantity,
         balanceAmount: orderItem.price * orderItem.quantity,
-        state: "not withdrawn",
+        state: 0,
         farmerId: 1,
         // farmerId: orderItem.farmerProduct.farmerId,
         farmerProductId: orderItem.farmerProductId,
@@ -156,10 +154,10 @@ const updatePaymentStatus = async (req, res) => {
         order.save();
 
         if (order.totalPrice === order.paidAmount) {
-          order.paymentStatus = "Fully Paid";
+          order.paymentStatus = "fullyPaid";
           order.save();
         } else if (order.paidAmount < order.totalPrice) {
-          order.paymentStatus = "Partially Paid";
+          order.paymentStatus = "partiallyPaid";
           order.save();
         }
 

@@ -6,15 +6,15 @@ module.exports=(sequelize,DataTypes)=>{
         //     autoIncrement: true,
         //     primaryKey: true
             
-        // },
+        // },  
         
         price:{
             type:DataTypes.DOUBLE,
 
         },
-    },
-    {
-        uniqueKeys:{
+    }, 
+    { 
+        uniqueKeys:{ 
             actions_unique: {
                 fields: ['productTypeId', 'coldRoomId']
             }

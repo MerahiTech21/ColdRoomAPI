@@ -7,6 +7,6 @@ const AuthRouter=require('./auth')
 
 //router.use('/employees',EmployeeRouter);
 router.use('/farmers', FarmerRouter);
-router.use('/auth/farmer',AuthRouter);
+router.use('/auth',AuthRouter);
 
 module.exports =router;
