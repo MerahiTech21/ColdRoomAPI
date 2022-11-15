@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const farmer = require("../../models/farmer");
 const { Op } = require("sequelize");
 const { all } = require("../../routes/farmer");
+const productType = require("../../models/productType");
 const Product = db.product
 const ProductType = db.productType;
 const FarmerProduct =db.farmerProduct;
@@ -42,6 +43,11 @@ const FarmerRent=db.FarmerRent;
     }
    
 }
+/**
+ * return all products associated with a certain farmer
+
+ */
+
 
 const getFarmerProduct=async (req,res)=>{
     try{
@@ -54,26 +60,26 @@ const getFarmerProduct=async (req,res)=>{
                 {
                 model:Product,        
               },{
-            model:ProductType
+               model:ProductType
              }]
 
         });
-        FProducts.forEach((FarmerProducts)=>{
-            res.json(FarmerProducts);
-            let all=[];
+        for(let FarmerProduct of FProducts){
+        let rent=await FarmerRent.findOne({where:{farmerProductId:req.params.id}});
+        let rentAmount=rent.rentAmount;
+
            let product={
                name:FarmerProduct.product.name,
-               image:process.env.BASE_URL+'/Images/'+FarmerProduct.Product.imageUrl,
+               image:process.env.BASE_URL+'/Images/'+FarmerProduct.product.imageUrl,
                remainingQuantity:FarmerProduct.currentQuantity,
-               //rentPrice:FarmerRent.findAll()
+               rentPrice:rentAmount,
+               
            };
-         let type={
+           allP.push(product);
+         
 
-         }
-
-
-        })
-        res.json(FProduct);
+        }
+        res.json(allP);
 
     }
     catch(err){
@@ -82,6 +88,56 @@ const getFarmerProduct=async (req,res)=>{
     }
 
 };
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+const getProductType=async(req,res)=>{
+  // res.json(req.body);
+    let allProdType=[];
+    try{
+        let id=req.body.ProductId
+        const ProdTypes= await FarmerProduct.findAll({where:{
+            farmerId:req.params.id,
+           productId:id
+
+        },
+        include:[
+            {
+                model:ProductType,
+            }     
+       ] 
+    });
+   // res.json(ProdTypes);
+    for(PTypes of ProdTypes){
+       // res.json(PTypes)
+        let ProddType={
+            name:PTypes.productType.title,
+           remainingQuantity:PTypes.currentQuantity,
+           soldQuantity:PTypes.soldQuantity,
+           addedDate:PTypes.createdAt,
+            image:process.env.BASE_URL+'/Images/'+PTypes.productType.imageUrl,
+
+        };
+
+        allProdType.push(ProddType);
+
+
+    }
+        res.json(allProdType);
+
+    }
+    catch(err){
+
+    }
+
+};
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 
 const getSoldProduct=async (req,res)=>{
     const allSold=[];
@@ -106,8 +162,7 @@ const getSoldProduct=async (req,res)=>{
            });
            for(let sp of SProduct){
               // let p=Product.findAll()
-               //res.json(sp.product.name);
-               
+               //res.json(sp.product.name);  
              let rent= await FarmerRent.findOne({where:{farmerProductId:sp.id}});
              let farmerBal=await FarmerBalance.findOne({where:{farmerProductId:sp.id}});
              let netBal=farmerBal.balanceAmount-rent.rentAmount;
@@ -116,6 +171,7 @@ const getSoldProduct=async (req,res)=>{
                    productName:sp.product.name,
                    typeName:sp.productType.title,
                    quality:sp.quality,
+                   image:process.env.BASE_URL+'/Images/'+sp.product.imageUrl,
                    soldAmount:sp.soldQuantity,
                    soldPrice:sp.soldQuantity*sp.pricePerKg,
                    rentCost:rent.rentAmount,    
@@ -166,6 +222,7 @@ module.exports = {
     getFarmerProduct,
     getSoldProduct,
     getWithDraw,
+    getProductType,
 
     
   };
