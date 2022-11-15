@@ -1,4 +1,6 @@
 const { db } = require("../../config/database");
+const { getPagination, getPagingData } = require("./pagination/getPagination");
+const Op = db.Sequelize.Op;
 
 const WholeSaler = db.wholeSaler;
 const Order = db.order;
@@ -11,36 +13,54 @@ const OrderLog = db.OrderLog;
 const OrderPaymentLog = db.OrderPaymentLog;
 const FarmerBalance = db.FarmerBalance;
 const FarmerRent = db.FarmerRent;
-const Address=db.address
-const ColdRoom=db.coldRoom
+const Address = db.address;
+const ColdRoom = db.coldRoom;
 
 const getOrders = async (req, res) => {
   try {
+    const { page, perPage, search, cold_room_id, date,status } = req.query;
+    const { limit, offset } = getPagination(page, perPage);
+    var searchCondition = search
+      ? {
+          [Op.or]: [
+            { fName: { [Op.like]: `%${search}%` } },
+            { lName: { [Op.like]: `%${search}%` } },
+          ],
+        }
+      : null;
+    var filterByColdRoom = cold_room_id ? { coldRoomId: cold_room_id } : null;
+    var filterByDate = date ? { createdAt: { [Op.lte]: date } } : null;
+    // var filterByStatus= status ? {[Op.or]:[{orderStatus:status} ,{orderStatus:status}]}:null
+    var filterByStatus = status ? { [Op.or]:[{orderStatus: status} ,{paymentStatus:{ [Op.like]: `%${status}%` }} ]} : null;
 
-    // const coldRoomId=req.user.coldRoomId
-
-    // if (!coldRoomId) {
-    //   res.status(404).json('Error ')
-
-    // }
-    const orders = await Order.findAll({
-      // where:{coldRoomId:coldRoomId}, 
-      attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },
-      include: [
+ 
+    const orders = await Order.findAndCountAll({
+          where: filterByDate,
+           where:filterByStatus,
+           where:filterByColdRoom,
+      limit: limit,
+      offset: offset,
+      attributes: { exclude: [ "wholeSalerId", "updatedAt"] },
+      include: [ 
         {
           model: WholeSaler,
           attributes: ["fName", "lName"],
-        }, {
+          where:searchCondition
+        },
+        {
           model: ColdRoom,
-          as:'coldRoom',
-           attributes: ["id","name"],
+          as: "coldRoom",
+          attributes: ["id", "name"],
+          required:true
           // include:[{model:Address,as:'address'}]
         },
       ],
     });
-    res.status(200).json(orders);
+
+    const paginated=getPagingData(orders,page,limit)
+    res.status(200).json(paginated);
   } catch (err) {
-    res.status(400).json("Error While Fetching  Orders"+err);
+    res.status(400).json("Error While Fetching  Orders" + err);
   }
 };
 
@@ -60,9 +80,6 @@ const getOrder = async (req, res) => {
   }
 };
 
-const filterOrder = async (req, res) => {};
-const searchOrder = async (req, res) => {};
-
 const updateOrderStatus = async (req, res) => {
   try {
     // let user=req.user
@@ -77,7 +94,7 @@ const updateOrderStatus = async (req, res) => {
 
         order.orderStatus = req.body.orderStatus;
         order.save();
-      
+
         OrderLog.create({
           changedFrom: prevStatus,
           changedTo: req.body.orderStatus,
@@ -86,10 +103,9 @@ const updateOrderStatus = async (req, res) => {
         });
 
         if (order.orderStatus === "Completed") {
-          console.log('completed1')
-         await setFarmerBalance(order);
-         console.log('completed2')
-
+          console.log("completed1");
+          await setFarmerBalance(order);
+          console.log("completed2");
         }
         res.json("order status updated");
       } else {
@@ -104,12 +120,11 @@ const updateOrderStatus = async (req, res) => {
 };
 
 const setFarmerBalance = async (order) => {
-
   try {
     let orderItems = await order.getOrderItems();
-    console.log('orderItems',orderItems)
-    let balanceDatas=[];
-    let rentDatas=[];
+    console.log("orderItems", orderItems);
+    let balanceDatas = [];
+    let rentDatas = [];
     for (let i = 0; i < orderItems.length; i++) {
       const orderItem = orderItems[i];
 
@@ -141,12 +156,12 @@ const setFarmerBalance = async (order) => {
       const balance = await FarmerBalance.bulkCreate(balanceDatas);
       const rent = await FarmerRent.bulkCreate(rentDatas);
 
-      return "Success"
+      return "Success";
     } catch (error) {
       throw new Error("Error while updating Farmer Balance" + error);
     }
   } catch (error) {
-    throw error
+    throw error;
   }
 };
 const updatePaymentStatus = async (req, res) => {

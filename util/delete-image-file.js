@@ -1,7 +1,10 @@
 const fs=require('fs')
+const path=require('path')
 
-const deleteImage= (path)=>{
-    fs.unlink(path,(err)=>{
+const deleteImage= (filePath)=>{
+
+    filePath=path.join(__dirname,'..',filePath)
+    fs.unlink(filePath,(err)=>{
         if(err){
             throw err
         }

@@ -1,5 +1,7 @@
 const { db } = require("../../config/database.js");
 const deleteImage = require("../../util/delete-image-file");
+const Op=db.Sequelize.Op
+
 const FarmerProduct = db.farmerProduct;
 
 const Product = db.product;
@@ -46,8 +48,8 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
 
-    const search=req.query.search 
     const products = await Product.findAll({
       where:search,
       include: [
@@ -73,12 +75,10 @@ const getAll = async (req, res) => {
   }
 };
 
-const getProductType=async (req,res)=>{
-
+const getProductType = async (req, res) => {
   try {
-
     const productTypes = await ProductType.findAll({
-      where:{productId:req.params.id},
+      where: { productId: req.params.id },
       include: [
         {
           model: FarmerProduct,
@@ -92,29 +92,39 @@ const getProductType=async (req,res)=>{
         name: productType.title,
         description: productType.description,
         imageUrl: productType.imageUrl,
-        totalproductType: productType.farmerProducts.reduce((total, fproduct) => {
-          return total + fproduct.currentQuantity;
-        }, 0),
+        totalproductType: productType.farmerProducts.reduce(
+          (total, fproduct) => {
+            return total + fproduct.currentQuantity;
+          },
+          0
+        ),
       };
     });
     res.json(manipulatedProducts);
   } catch (error) {
     res.status(404).json("Error " + error);
   }
-}
+};
 
-const update = (req, res) => {
+const update = async(req, res) => {
   try {
-    const fproduct = Product.findByPk(req.params.id);
+    const product = await Product.findByPk(req.params.id);
+    var imageUrl = null;
     if (req.file) {
-      deleteImage('image/')
+      imageUrl = req.file.filename;
     }
-    if (fproduct) {
-      fproduct.name = req.body.name;
-      fproduct.imageUrl = req.file.filename;
-      fproduct.save();
+    if (product) {
+      if (imageUrl) {
+        deleteImage("images/" + product.imageUrl);
+        product.imageUrl = req.file.filename;
+      }
+      product.name = req.body.name;
+      product.save();
+      res.json(product)
     }
-  } catch (error) {}
+  } catch (error) {
+    res.json(error);
+  }
 };
 
 const destroy = async (req, res) => {
@@ -124,14 +134,17 @@ const destroy = async (req, res) => {
      * remove the product image from the file
      * destroy product
      */
-    const fproduct = FarmerProduct.findOne({
+    const fproduct = await FarmerProduct.findOne({
       where: { productId: req.params.id },
     });
     if (fproduct) {
       res.status(403).json("Not Possible to delete");
+      return
     } else {
-      deleteImage("images/");
-      Product.destry(req.params.id);
+      const product = await Product.findByPk(req.params.id);
+
+      deleteImage("images/" + product.imageUrl);
+      await Product.destry(req.params.id);
       res.json("deleted successfully");
     }
   } catch (error) {
@@ -142,5 +155,7 @@ const destroy = async (req, res) => {
 module.exports = {
   create,
   getAll,
-  getProductType
+  getProductType,
+  update,
+  destroy
 };

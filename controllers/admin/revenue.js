@@ -1,24 +1,28 @@
 const { db } = require("../../config/database");
-
+const Op=db.Sequelize.Op
+const {getPagination,getPagingData}=require('./pagination/getPagination')
 const FarmerBalance = db.FarmerBalance;
 const Farmer = db.farmer;
 
 const getRevenue = async (req, res) => {
   try {
 
-    // const coldRoomId=req.user.coldRoomId
+    const {page,perPage,search,coldRoomId,date}=req.query 
+    const {limit,offset}=getPagination(page,perPage)
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+    var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
+    var filterByDate= date ? {createdAt:{[Op.lte]:date}} : null
 
-    // if (!coldRoomId) {
-    //   res.status(404).json('Error ')
-
-    // }
-    const Revenues = await FarmerBalance.findAll({
-      // where:{coldRoomId:coldRoomId},
-
+    const Revenues = await FarmerBalance.findAndCountAll({
+      limit:limit, 
+      offset:offset,
+       where:filterByColdRoom,filterByDate,
+       
       include: [
         {
           model: Farmer,
           attributes: ["fName", "lName"],
+          where:searchCondition
         },
         {
           model: db.OrderItem,
@@ -38,22 +42,24 @@ const getRevenue = async (req, res) => {
       ],
     });
 
-    const newRevenues = Revenues.map((farmerBalance) => {
+    const paginated=getPagingData(Revenues,page,limit)
+
+    const newRevenues = Revenues.rows.map((farmerBalance) => {
       return {
 
         farmer: farmerBalance.farmer,
         coldRoom: farmerBalance.coldRoom,
-        productSku: farmerBalance.farmerProduct.product.id,
+        productSku: farmerBalance.farmerProduct?.product.id,
       //  price: farmerBalance.orderItem.price,
-        soldDate: farmerBalance.orderItem.order.createdAt,
-        productName: farmerBalance.farmerProduct.product.name,
-        productType: farmerBalance.farmerProduct.productType.title,
-        addedDate: farmerBalance.farmerProduct.createdAt,
+        soldDate: farmerBalance.orderItem?.order.createdAt,
+        productName: farmerBalance.farmerProduct?.product.name,
+        productType: farmerBalance.farmerProduct?.productType.title,
+        addedDate: farmerBalance.farmerProduct?.createdAt,
         quantity: farmerBalance.quantity,
         amount: farmerBalance.balanceAmount,
       };
     });
-    res.json(newRevenues);
+    res.json({...paginated,data_name:newRevenues});
   } catch (error) {
     res.status(400).json("Error While Fetching" + error);
   }

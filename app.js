@@ -31,12 +31,12 @@ app.use(express.urlencoded({ extended: true }));
  
 app.use(cookieParser());
 app.use('/images',express.static(path.join(__dirname, 'images')));
- 
+  
 //registering router
 app.use('/admin',adminRouter)
 app.use('/farmer',farmerRouter)
 app.use('/wholesaler',wholeSalerRouter)
-app.use('/localadmin',localAdminRouter)
+app.use('/localadmin',localAdminRouter) 
 app.use('/', indexRouter);
 // app.use('/images',express.static('images'));
 
@@ -53,7 +53,7 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
+  res.status(err.status || 500).json(err);
   // res.render('error');
 });
 

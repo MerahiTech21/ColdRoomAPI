@@ -14,7 +14,8 @@ const WholeSalerRouter=require('./whole-saler')
 
 const RevenueRouter=require('./revenue')
 const SalesRouter=require('./sales')
-
+const DashboardRouter=require('./dashboard');
+const { getAllColdroomName } = require('../../controllers/admin/coldRoom');
 
 //router.use('/employees',EmployeeRouter);
 router.use('/employees'/*,ValidateToken*/, EmployeeRouter);
@@ -31,8 +32,8 @@ router.use('/sales',SalesRouter)
 router.use('/orders',OrderRouter);
 router.use('/coldroom-products',CRoomProductRouter);
 
-
-
+router.use('/dashboard',DashboardRouter)
+router.use('/coldRoomNames',getAllColdroomName)
 
 
 

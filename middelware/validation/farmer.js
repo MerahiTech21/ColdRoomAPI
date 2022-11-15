@@ -27,11 +27,11 @@ exports.ValidateFarmerRegistration = [
 exports.ValidationResult = (req, res, next) => {
   let result = validationResult(req).array();
 
-  if (!result.length) return next();
+  if (result.length == 0) {return next()}
 
   const n=result.map((one)=>{
     return one.msg
   })
   let error = result[0].msg;
-  res.status(400).json({ succes: false, message: n });
+  res.status(400).json({ succes: false, message: error });
 };
