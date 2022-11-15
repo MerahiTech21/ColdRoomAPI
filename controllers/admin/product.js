@@ -4,7 +4,6 @@ const FarmerProduct = db.farmerProduct;
 
 const Product = db.product;
 const ProductType = db.productType;
-
 //add product
 const create = async (req, res) => {
   const productImage = req.files.filter((file) => {
@@ -48,7 +47,9 @@ const create = async (req, res) => {
 const getAll = async (req, res) => {
   try {
 
+    const search=req.query.search 
     const products = await Product.findAll({
+      where:search,
       include: [
         {
           model: FarmerProduct,
