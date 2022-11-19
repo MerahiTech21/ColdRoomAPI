@@ -34,7 +34,7 @@ const placeOrder = async (req, res) => {
             coldRoomId: req.body.coldRoomId,
           },
         });
-        totalPrice = totalPrice + Number(crProduct.price);
+        totalPrice = totalPrice + Number(crProduct?.price);
       } catch (error) {
         console.log("Error1 ", error);
       }
@@ -59,7 +59,7 @@ const placeOrder = async (req, res) => {
           include:[{model:ProductType,include:Product}]
       });
 
-      const coldRoomProductPrice = crProduct.price;
+      const coldRoomProductPrice = crProduct?.price;
 
       //get quantity of item in the cold room
       const totalCurrentQuantity = await FarmerProduct.sum("currentQuantity", {
@@ -173,7 +173,7 @@ const placeOrder = async (req, res) => {
 
  } catch (error) {
     console.log("block error", error);
-    res.status(500).json('Internal Server Error')
+    res.status(500).json('Internal Server Error '+error)
   }
 };
 

@@ -1,7 +1,7 @@
 const { request } = require("express");
 const { db } = require("../../config/database.js");
 const path = require("path");
-const Op=db.Sequelize.Op
+const Op = db.Sequelize.Op;
 
 const ColdRoom = db.coldRoom;
 const Address = db.address;
@@ -84,32 +84,30 @@ const update = async (req, res) => {
   };
 
   try {
-    
     try {
       const updatedColdRoom = await ColdRoom.findOne({
         where: { id: req.params.id },
       });
 
-      if(updatedColdRoom){
+      if (updatedColdRoom) {
+        let addressUpdated = await Address.update(AddressInfo, {
+          where: { id: updatedColdRoom.addressId },
+        });
+        const coldRoomUpdated = await ColdRoom.update(ColdRoomInfo, {
+          where: { id: updatedColdRoom.id },
+        });
+        let rent = await Rent.findOne({
+          where: { coldRoomId: updatedColdRoom.id },
+        });
 
-      let addressUpdated = await Address.update(AddressInfo, {
-        where: { id: updatedColdRoom.addressId },
-      });
-      const coldRoomUpdated = await ColdRoom.update(ColdRoomInfo, {
-        where: { id: updatedColdRoom.id },
-      });
-      let rent = await Rent.findOne({
-        where: { coldRoomId: updatedColdRoom.id },
-      });
-
-      if(rent){
-           const rentUpdate = await Rent.update(rentInfo, {
-        where: { id: rent.id },
-      });
+        if (rent) {
+          const rentUpdate = await Rent.update(rentInfo, {
+            where: { id: rent.id },
+          });
+        }
       }
-    }
     } catch (error) {
-        throw error
+      throw error;
     }
 
     const coldRoom = await ColdRoom.findOne({
@@ -157,11 +155,13 @@ const update = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     // const procount=Produ
-    const search=req.query.search
-    var searchCondition = search ?  {name: { [Op.like]: `%${search}%` }} : null;
+    const search = req.query.search;
+    var searchCondition = search
+      ? { name: { [Op.like]: `%${search}%` } }
+      : null;
 
     const coldRooms = await ColdRoom.findAll({
-      where:searchCondition,
+      where: searchCondition,
       attributes: {
         include: [
           [
@@ -201,20 +201,30 @@ const getAll = async (req, res) => {
   }
 };
 
-const getAllColdroomName=async(req,res)=>{
-  
-     try {
-         const coldrooms=await ColdRoom.findAll({
-      attributes:['id','name']
-     })
-     res.json(coldrooms)
-     } catch (error) {
-      res.status(400).json("Error "+error)
-     }
-}
+const getAllColdroomName = async (req, res) => {
+  try {
+    const coldrooms = await ColdRoom.findAll({
+      attributes: ["id", "name"],
+    });
+    res.json(coldrooms);
+  } catch (error) {
+    res.status(400).json("Error " + error);
+  }
+};
+
+const assignManager = async (req, res) => {
+  try {
+    const coldRoom = await ColdRoom.findByPk(req.params.coldRoomId);
+    coldRoom.employeeId = req.query.employeeId;
+     await coldRoom.save();
+
+    res.json(await Employee.findByPk(req.query.employeeId));
+  } catch (error) {}
+}; 
 module.exports = {
   create,
   update,
   getAll,
-  getAllColdroomName
+  getAllColdroomName,
+  assignManager,
 };

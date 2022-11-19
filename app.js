@@ -2,11 +2,10 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser')
 var cors=require('cors');
+//  const {db}=require('./config/database.js');
 
 var logger = require('morgan');
-const db=require('./config/database.js');
 // importing router index file
 var indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');

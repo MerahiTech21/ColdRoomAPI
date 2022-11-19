@@ -16,7 +16,7 @@ const getRevenue = async (req, res) => {
     const Revenues = await FarmerBalance.findAndCountAll({
       limit:limit, 
       offset:offset,
-       where:filterByColdRoom,filterByDate,
+       where:{...filterByColdRoom,...filterByDate},
        
       include: [
         {

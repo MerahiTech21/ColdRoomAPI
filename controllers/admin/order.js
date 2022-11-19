@@ -18,7 +18,7 @@ const ColdRoom = db.coldRoom;
 
 const getOrders = async (req, res) => {
   try {
-    const { page, perPage, search, cold_room_id, date,status } = req.query;
+    const { page, perPage, search, coldRoomId, date,status } = req.query;
     const { limit, offset } = getPagination(page, perPage);
     var searchCondition = search
       ? {
@@ -28,16 +28,19 @@ const getOrders = async (req, res) => {
           ],
         }
       : null;
-    var filterByColdRoom = cold_room_id ? { coldRoomId: cold_room_id } : null;
-    var filterByDate = date ? { createdAt: { [Op.lte]: date } } : null;
+    var filterByColdRoom = coldRoomId ? { coldRoomId: coldRoomId } : null;
+    var filterByDate = date ? {createdAt: { [Op.lte]: date }  } :null
     // var filterByStatus= status ? {[Op.or]:[{orderStatus:status} ,{orderStatus:status}]}:null
-    var filterByStatus = status ? { [Op.or]:[{orderStatus: status} ,{paymentStatus:{ [Op.like]: `%${status}%` }} ]} : null;
+    var filterByStatus = status ? { [Op.or]:[{orderStatus:status} ,{paymentStatus:status} ]} : null;
 
  
     const orders = await Order.findAndCountAll({
-          where: filterByDate,
-           where:filterByStatus,
-           where:filterByColdRoom,
+          where:{
+            ...filterByStatus,...filterByColdRoom,...filterByDate
+          }
+          // ,where:{...filterByColdRoom}
+          ,
+          //  where:filterByColdRoom,
       limit: limit,
       offset: offset,
       attributes: { exclude: [ "wholeSalerId", "updatedAt"] },
@@ -53,6 +56,12 @@ const getOrders = async (req, res) => {
           attributes: ["id", "name"],
           required:true
           // include:[{model:Address,as:'address'}]
+        },        {
+          model: OrderLog,
+    
+        },        {
+          model: OrderPaymentLog,
+      
         },
       ],
     });

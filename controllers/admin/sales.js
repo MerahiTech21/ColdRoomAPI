@@ -20,7 +20,7 @@ const getSales = async (req, res) => {
       limit:limit,
       offset:offset,
       
-        where:filterByColdRoom,filterByDate,filterByStatus,
+        where:{...filterByColdRoom,...filterByDate,...filterByStatus},
       include: [
         {
           model: WholeSaler,

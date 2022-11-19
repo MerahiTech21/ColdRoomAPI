@@ -5,6 +5,8 @@ const EmployeeRouter=require('./employee');
 const AuthRouter=require('./auth')
 const ValidateToken = require('../../middelware/validation/validate-token');
 const ProductRouter=require('./product');
+const ProductTypeRouter=require('./product-type');
+
 const ColdRoomRouter=require('./coldRoom');
 const AddressRouter=require('./address');
 const FarmerRouter=require('./farmer');
@@ -18,22 +20,23 @@ const DashboardRouter=require('./dashboard');
 const { getAllColdroomName } = require('../../controllers/admin/coldRoom');
 
 //router.use('/employees',EmployeeRouter);
-router.use('/employees'/*,ValidateToken*/, EmployeeRouter);
+router.use('/employees',ValidateToken, EmployeeRouter);
 router.use('/auth',AuthRouter);
-router.use('/products',ProductRouter);
-router.use('/coldRooms',ColdRoomRouter);
-router.use('/address',AddressRouter);
-router.use('/farmers',FarmerRouter);
-router.use('/wholesalers',WholeSalerRouter)
+router.use('/products',ValidateToken,ProductRouter);
+router.use('/product-types',ValidateToken,ProductTypeRouter);
+router.use('/coldRooms',ValidateToken,ColdRoomRouter);
+router.use('/address',ValidateToken,AddressRouter);
+router.use('/farmers',ValidateToken,FarmerRouter);
+router.use('/wholesalers',ValidateToken,WholeSalerRouter)
 
-router.use('/revenues',RevenueRouter)
-router.use('/sales',SalesRouter)
+router.use('/revenues',ValidateToken,RevenueRouter)
+router.use('/sales',ValidateToken,SalesRouter)
 
 router.use('/orders',OrderRouter);
-router.use('/coldroom-products',CRoomProductRouter);
+router.use('/coldroom-products',ValidateToken,CRoomProductRouter);
 
-router.use('/dashboard',DashboardRouter)
-router.use('/coldRoomNames',getAllColdroomName)
+router.use('/dashboard',ValidateToken,DashboardRouter)
+router.use('/coldRoomNames',ValidateToken,getAllColdroomName)
 
 
 
