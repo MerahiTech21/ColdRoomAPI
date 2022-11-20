@@ -27,6 +27,7 @@ const SaveFarmerProduct = async (req, res) => {
     soldQuantity: 0,
     currentQuantity:req.body.quantity ,
     quality: req.body.quality,
+    pricePerKg:123,
     warehousePosition: req.body.warehousePosition, 
   };
 

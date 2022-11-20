@@ -1,5 +1,5 @@
 const { db } = require("../../config/database.js");
-const deleteImage = require("../../util/delete-image-file");
+const deleteImage = require('../../util/delete-image-file')
 const Op=db.Sequelize.Op
 
 const FarmerProduct = db.farmerProduct;
@@ -90,8 +90,8 @@ const getProductType = async (req, res) => {
     const manipulatedProducts = productTypes.map((productType) => {
       return {
         id: productType.id,
-        name: productType.title,
-        description: productType.description,
+       title: productType.title,
+       description: productType.description,
         imageUrl: productType.imageUrl,
         totalproductType: productType.farmerProducts.reduce(
           (total, fproduct) => {
@@ -101,11 +101,11 @@ const getProductType = async (req, res) => {
         ),
       };
     });
-    res.json(manipulatedProducts);
+   res.json(manipulatedProducts);
   } catch (error) {
     res.status(404).json("Error " + error);
-  }
-};
+  }  
+};  
 
 const update = async(req, res) => {
   try {

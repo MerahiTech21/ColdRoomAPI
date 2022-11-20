@@ -1,6 +1,25 @@
+const { db } = require("../../config/database.js");
 
 const Product = db.product;
 const ProductType = db.productType;
+
+const create = async(req, res) => {
+  try {
+    const productType = new ProductType()
+    var imageUrl = null;
+    if (req.file) {
+      imageUrl = req.file.filename;
+    }
+
+      productType.title = req.body.title;
+      productType.description = req.body.description;
+      productType.save();
+      res.json(productType)
+    
+  } catch (error) { 
+    res.json(error);
+  }
+};
 
 const update = async(req, res) => {
   try {
@@ -49,3 +68,8 @@ const destroy = async (req, res) => {
   }
 };
   
+module.exports = {
+  create,
+  update,
+  destroy
+};

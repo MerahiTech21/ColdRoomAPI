@@ -4,6 +4,9 @@ const UploadImage=require('../../middelware/file-upload-multer/product-image-upl
  router.post('/',UploadImage,ProductController.create);
  router.get('/',ProductController.getAll)
  router.get('/:id',ProductController.getProductType)
+ router.put('/:id',UploadImage,ProductController.update)
+ router.delete('/:id',ProductController.destroy)
 
  module.exports = router;
 
+ 

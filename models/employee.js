@@ -42,7 +42,13 @@ module.exports=(sequelize,DataTypes)=>{
             type:DataTypes.STRING,
            allowNull:false,
 
-        }
+        },
+        tokens:[{
+            token:{
+                type:String,
+                required: true
+            }
+        }],
 
     });
     return employee;
