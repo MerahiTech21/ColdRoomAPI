@@ -6,7 +6,6 @@ const FarmerProduct = db.farmerProduct;
 
 const Product = db.product;
 const ProductType = db.productType;
-
 //add product
 const create = async (req, res) => {
   const productImage = req.files.filter((file) => {
@@ -49,8 +48,11 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    
+   const search=req.query.search
+    var searchCondition = search ? {name: { [Op.like]: `%${search}%` }} : null;
+
     const products = await Product.findAll({
+      where:searchCondition,
       include: [
         {
           model: FarmerProduct,

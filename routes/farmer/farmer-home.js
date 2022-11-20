@@ -6,7 +6,7 @@ router.get('/:id',  farmerHomeController.getData);
 router.get('/farmerProduct/:id',  farmerHomeController.getFarmerProduct);
 router.get('/farmerWithDraw/:id',  farmerHomeController.getWithDraw);
 router.get('/soldProduct/:id',  farmerHomeController.getSoldProduct);
-
+router.post('/productType/:id',  farmerHomeController.getProductType);
 
 
 

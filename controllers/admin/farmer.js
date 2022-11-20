@@ -1,4 +1,5 @@
 const { db } = require("../../config/database");
+const Op=db.Sequelize.Op
 
 const Farmer = db.farmer;
 const Address = db.address;
@@ -9,8 +10,12 @@ const ProductType=db.productType
 const getFarmers=async(req,res)=>{
  
   try {
-    
+    const search=req.query.search
+
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+
   const farmers=await Farmer.findAll({
+    where:searchCondition,
 
     include:[
       {

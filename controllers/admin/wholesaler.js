@@ -1,6 +1,7 @@
 
 
 const {db} = require("../../config/database");
+const Op=db.Sequelize.Op
 
 const WholeSaler=db.wholeSaler
 const Order =db.order
@@ -13,7 +14,12 @@ const getWholeSalers = async (req, res) => {
     //   res.status(404).json('Error ')
 
     // }
+    const search=req.query.search
+
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+
     const wSalers = await WholeSaler.findAll({
+      where:searchCondition,
 
         include:[
             {
