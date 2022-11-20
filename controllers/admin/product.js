@@ -98,7 +98,7 @@ const getProductType = async (req, res) => {
           0
         ),
       };
-    });
+    }); 
    res.json(manipulatedProducts);
   } catch (error) {
     res.status(404).json("Error " + error);

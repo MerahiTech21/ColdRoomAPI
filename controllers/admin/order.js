@@ -38,9 +38,8 @@ const getOrders = async (req, res) => {
           where:{
             ...filterByStatus,...filterByColdRoom,...filterByDate
           }
-          // ,where:{...filterByColdRoom}
           ,
-          //  where:filterByColdRoom,
+         
       limit: limit,
       offset: offset,
       attributes: { exclude: [ "wholeSalerId", "updatedAt"] },
@@ -80,7 +79,7 @@ const getOrder = async (req, res) => {
       attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },
       include: [
         { model: WholeSaler, attributes: ["fName", "lName"] },
-        { model: OrderItem, include: [{ model: FarmerProduct }] },
+        { model: OrderItem, include: [{ model: FarmerProduct,include:[Product,ProductType] }] },
       ],
     });
     res.status(200).json(orders);
