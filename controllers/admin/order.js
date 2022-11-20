@@ -178,10 +178,10 @@ const updatePaymentStatus = async (req, res) => {
         order.save();
 
         if (order.totalPrice === order.paidAmount) {
-          order.paymentStatus = "Fully Paid";
+          order.paymentStatus = "fullyPaid";
           order.save();
         } else if (order.paidAmount < order.totalPrice) {
-          order.paymentStatus = "Partially Paid";
+          order.paymentStatus = "partiallyPaid";
           order.save();
         }
 

@@ -22,7 +22,7 @@ module.exports =(sequelize,Datatypes)=>{
          },
          currentQuantity:{
             type:Datatypes.DOUBLE, 
-            allowNull:false
+            allowNull:false 
          },
          pricePerKg:{ //this field come from current cold room product price
             type:Datatypes.DOUBLE,

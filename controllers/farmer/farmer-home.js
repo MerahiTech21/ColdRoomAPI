@@ -69,8 +69,9 @@ const getFarmerProduct=async (req,res)=>{
         let rentAmount=rent.rentAmount;
 
            let product={
-               name:FarmerProduct.product.name,
-               image:process.env.BASE_URL+'/Images/'+FarmerProduct.product.imageUrl,
+            id:FarmerProduct.product.id,
+            name:FarmerProduct.product.name,
+            image:FarmerProduct.product.imageUrl,
                remainingQuantity:FarmerProduct.currentQuantity,
                rentPrice:rentAmount,
                
@@ -94,12 +95,12 @@ const getFarmerProduct=async (req,res)=>{
  * @param {*} res 
  */
 const getProductType=async(req,res)=>{
-  // res.json(req.body);
+   //res.json(req.body);
     let allProdType=[];
     try{
         let id=req.body.ProductId
         const ProdTypes= await FarmerProduct.findAll({where:{
-            farmerId:req.params.id,
+         farmerId:req.params.id,
            productId:id
 
         },
@@ -109,26 +110,27 @@ const getProductType=async(req,res)=>{
             }     
        ] 
     });
-   // res.json(ProdTypes);
+   //res.json(ProdTypes);
     for(PTypes of ProdTypes){
-       // res.json(PTypes)
+      // res.json(PTypes)
         let ProddType={
-            name:PTypes.productType.title,
+           name:PTypes.productType.title,
            remainingQuantity:PTypes.currentQuantity,
            soldQuantity:PTypes.soldQuantity,
            addedDate:PTypes.createdAt,
-            image:process.env.BASE_URL+'/Images/'+PTypes.productType.imageUrl,
+            image:PTypes.productType.imageUrl,
 
         };
 
-        allProdType.push(ProddType);
+       allProdType.push(ProddType);
 
 
     }
-        res.json(allProdType);
+       res.json(allProdType);
 
     }
     catch(err){
+        res.json(err);
 
     }
 
@@ -171,7 +173,7 @@ const getSoldProduct=async (req,res)=>{
                    productName:sp.product.name,
                    typeName:sp.productType.title,
                    quality:sp.quality,
-                   image:process.env.BASE_URL+'/Images/'+sp.product.imageUrl,
+                   image:sp.product.imageUrl,
                    soldAmount:sp.soldQuantity,
                    soldPrice:sp.soldQuantity*sp.pricePerKg,
                    rentCost:rent.rentAmount,    

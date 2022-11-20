@@ -19,14 +19,16 @@ const getProfile=async(req,res)=>{
 
 const changePhoneNumber=async(req,res)=>{
     try{
+        //res.json('hii');
       const farmer=await Farmer.findByPk(req.params.id);
+      //res.json(farmer);
       farmer.phoneNumber=req.body.phoneNumber;
-
+     //res.json(req.body.phoneNumber);
        await farmer.save();
         res.status(200).json(farmer);
 
     }catch(err){
-     res.json(err);
+     res.status(404).json(err);
     }
    
 
@@ -46,7 +48,7 @@ const changePassword=async(req,res)=>{
        res.status(200).json(farmer);
 
     }catch(err){
-     res.json(err);
+     res.status(404).json(err);
     }
    
 

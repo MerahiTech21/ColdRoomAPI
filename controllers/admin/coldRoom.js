@@ -107,7 +107,7 @@ const update = async (req, res) => {
         where: { id: rent.id },
       });
       }
-    }
+    }   
     } catch (error) {
         throw error
     }
@@ -115,12 +115,11 @@ const update = async (req, res) => {
     const coldRoom = await ColdRoom.findOne({
       where: { id: req.params.id },
       attributes: {
-        include: [
+        include: [ 
           [
             db.Sequelize.fn(
               "sum",
-              db.Sequelize.col("farmerProducts.currentQuantity")
-            ),
+             ),
             "stockProduct",
           ],
         ],

@@ -48,10 +48,11 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+   const search=req.query.search
+    var searchCondition = search ? {name: { [Op.like]: `%${search}%` }} : null;
 
     const products = await Product.findAll({
-      where:search,
+      where:searchCondition,
       include: [
         {
           model: FarmerProduct,
