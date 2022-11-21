@@ -8,7 +8,7 @@ router.get('/',  EmployeeController.getAll);
 router.get('/:id',  EmployeeController.getOne);
 router.post('/',ValidateEmployeeRegistration,ValidationResult,EmployeeController.create);
 router.put('/:id',EmployeeController.update);
-router.delete('/:id',EmployeeController.destroy);
+router.put('/update-status/:id',EmployeeController.updateStatus);
 
 
 module.exports = router;

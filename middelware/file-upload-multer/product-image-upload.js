@@ -17,6 +17,7 @@ const fileFilter=(req,file,cb)=>{
       }
 
 }
-      const upload=multer({storage:fileStorage,fileFilter:fileFilter}).any()//a middleware for encodding multipart/form-data
+      const upload=multer({storage:fileStorage,fileFilter:fileFilter}).any()
+                                          //.single('image')//a middleware for encodding multipart/form-data
 
 module.exports=upload

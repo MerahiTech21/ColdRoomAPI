@@ -106,10 +106,7 @@ const update = async (req, res) => {
           });
         }
       }
-<<<<<<< HEAD
-    }   
-=======
->>>>>>> 9b8fead91801754e7e3399eb3c601e442b094275
+       
     } catch (error) {
       throw error;
     }

@@ -105,11 +105,14 @@ const update = async (req, res) => {
 
 //delete user
 
-const destroy = async (req, res) => {
+const updateStatus = async (req, res) => {
   let id = req.params.id; 
-  await Employee.destroy({ where: { id: id } }); 
-  res.status(200).send("deleted successfully");
-  console.log("deleted");
+  const employee =await Employee.findByPk(id); 
+  employee.status=req.body.status
+  employee.save()
+
+  res.status(200).json(employee);
+  console.log("status updated");
 };
 
 module.exports = {
@@ -117,5 +120,5 @@ module.exports = {
   getAll,
   getOne,
   update,
-  destroy,
+  updateStatus,
 };

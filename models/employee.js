@@ -43,12 +43,11 @@ module.exports=(sequelize,DataTypes)=>{
            allowNull:false,
 
         },
-        tokens:[{
-            token:{
-                type:String,
-                required: true
+        status:{
+                type:DataTypes.BOOLEAN,
+                defaultValue :1,
             }
-        }],
+        ,
 
     });
     return employee;

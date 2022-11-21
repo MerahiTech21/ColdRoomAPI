@@ -24,7 +24,7 @@ const getFarmers=async(req,res)=>{
       },
       {
         model:FarmerRent,
-
+ 
       }, {
         model:Address,
         as:'address'

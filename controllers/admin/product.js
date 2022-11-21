@@ -1,6 +1,6 @@
 const { db } = require("../../config/database.js");
-const deleteImage = require('../../util/delete-image-file')
-const Op=db.Sequelize.Op
+const deleteImage = require("../../util/delete-image-file");
+const Op = db.Sequelize.Op;
 
 const FarmerProduct = db.farmerProduct;
 
@@ -48,11 +48,13 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-   const search=req.query.search
-    var searchCondition = search ? {name: { [Op.like]: `%${search}%` }} : null;
+    const search = req.query.search;
+    var searchCondition = search
+      ? { name: { [Op.like]: `%${search}%` } }
+      : null;
 
     const products = await Product.findAll({
-      where:searchCondition,
+      where: searchCondition,
       include: [
         {
           model: FarmerProduct,
@@ -90,8 +92,8 @@ const getProductType = async (req, res) => {
     const manipulatedProducts = productTypes.map((productType) => {
       return {
         id: productType.id,
-       title: productType.title,
-       description: productType.description,
+        title: productType.title,
+        description: productType.description,
         imageUrl: productType.imageUrl,
         totalproductType: productType.farmerProducts.reduce(
           (total, fproduct) => {
@@ -100,31 +102,34 @@ const getProductType = async (req, res) => {
           0
         ),
       };
-    }); 
-   res.json(manipulatedProducts);
+    });
+    res.json(manipulatedProducts);
   } catch (error) {
     res.status(404).json("Error " + error);
-  }  
-};  
+  }
+};
 
-const update = async(req, res) => {
+const update = async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id);
     var imageUrl = null;
-    if (req.file) {
-      imageUrl = req.file.filename;
+    console.log('filemdndn',req)
+    if (req.files[0]) {
+      console.log('there')
+      imageUrl = req.files[0].filename;
     }
     if (product) {
       if (imageUrl) {
-        deleteImage("images/" + product.imageUrl);
-        product.imageUrl = req.file.filename;
+        deleteImage("images/" + product.getDataValue('imageUrl'));
+        product.imageUrl = imageUrl;
       }
       product.name = req.body.name;
-      product.save();
-      res.json(product)
+      await product.save();
+      res.json(product);
     }
   } catch (error) {
-    res.json(error);
+    console.log(error)
+    res.status(400).json('Error '+error);
   }
 };
 
@@ -140,16 +145,23 @@ const destroy = async (req, res) => {
     });
     if (fproduct) {
       res.status(403).json("Not Possible to delete");
-      return
+      return;
     } else {
       const product = await Product.findByPk(req.params.id);
 
-      deleteImage("images/" + product.imageUrl);
-      await Product.destry(req.params.id);
-      res.json("deleted successfully");
+      if (product) {
+        deleteImage("images/" + product.getDataValue('imageUrl'));
+        await product.destroy();
+        res.status(200).json("Successsfully Deleted");
+        // await Product.destroy({ where: { id: req.params.id } });
+      }else{
+                res.status('404').json("res]source not found");
+
+      }
     }
   } catch (error) {
-    res.json("Error while Deleting " + error);
+    console.log(error)
+    res.status(400).json("Error while Deleting " + error);
   }
 };
 
@@ -158,5 +170,5 @@ module.exports = {
   getAll,
   getProductType,
   update,
-  destroy
+  destroy,
 };

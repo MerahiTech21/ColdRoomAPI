@@ -52,7 +52,7 @@ const myAccount=async(req,res)=>{
   try{
     console.log('user',req.user)
   const employee=await db.employee.findByPk(req.user.id,{
-    attributes:{exclude:['password','tokens']}
+    attributes:{exclude:['password']}
   });
   res.json(employee)
   }catch(error){
