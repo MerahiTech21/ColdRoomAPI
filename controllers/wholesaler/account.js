@@ -4,7 +4,8 @@ const bcrypt = require("bcrypt");
 const WholeSaler = db.wholeSaler;
 const Address = db.address;
 
-const create = async (req, res) => {
+const create = async (req, res) => { 
+  res.json('hii');
   var userInfo = {
     fName: req.body.fName,
     lName: req.body.lName,
@@ -19,7 +20,7 @@ const create = async (req, res) => {
       where: { phoneNumber: userInfo.phoneNumber },
     });
 
-    if (oldWholeSaler) {
+    if (oldWholeSaler) {gi
       return res.status(409).json("User Already Exist. Please Login");
     }
 
