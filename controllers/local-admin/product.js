@@ -95,7 +95,20 @@ const getProductDetail =async(req,res)=>{
 }
 
 const getProducts=async(req,res)=>{
-  const products=await 
+
+
+  try {
+      const products=await db.product.findAll({
+    attributes:['id','name'],
+    include:[{
+      model:db.productType,
+      attributes:['id','title']
+    }]
+  })
+  res.status(200).json(products)
+  } catch (error) {
+    res.status(400).json('Error '+error)
+  }
 }
 
-module.exports={SaveFarmerProduct,getFarmersProducts,getProductDetail}
+module.exports={SaveFarmerProduct,getFarmersProducts,getProductDetail,getProducts}
