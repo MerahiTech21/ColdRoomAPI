@@ -94,5 +94,8 @@ const getProductDetail =async(req,res)=>{
  
 }
 
+const getProducts=async(req,res)=>{
+  const products=await 
+}
 
 module.exports={SaveFarmerProduct,getFarmersProducts,getProductDetail}

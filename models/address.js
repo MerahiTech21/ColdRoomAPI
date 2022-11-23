@@ -20,6 +20,9 @@ module.exports=(sequelize,DataTypes)=>{
             allowNull:false
 
         },
+        location:{
+            type:DataTypes.STRING,
+        }
 
     });
     return address;

@@ -6,6 +6,7 @@ const Address = db.address;
 const FarmerBalance = db.FarmerBalance;
 const FarmerRent = db.FarmerRent;
 const FarmerProduct = db.farmerProduct;
+const Op=db.Sequelize.Op
 
 const AddFarmer = async (farmerData) => {
   var userInfo = {
@@ -73,7 +74,13 @@ const getFarmerProduct = async (req, res) => {
 
 const getFarmers = async (req, res) => {
   try {
+
+    const search=req.query.search
+
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+
     const farmers = await Farmer.findAll({
+      where:searchCondition,
       include: [
         {
           model: FarmerBalance,
@@ -116,4 +123,31 @@ const getFarmers = async (req, res) => {
   }
 };
 
-module.exports = { AddFarmer, getFarmerProduct, getFarmers };
+const searchFarmer=async(req,res)=>{
+
+  const search=req.query.search
+  var searchCondition = search ? {
+      [Op.or]: [
+        { fName: { [Op.like]: `%${search}%` } },
+        { lName: { [Op.like]: `%${search}%` } },
+        { phoneNumber: { [Op.like]: `%${search}%` } },
+      ],
+    }
+  : null;
+   try {
+    const farmers=await Farmer.findAll({
+      where:searchCondition,
+      attributes:['id','fName','lName','phoneNumber'],
+      include:[{
+        model:Address,
+        as:'address',
+        attributes:['location']
+      }]
+    })
+
+    res.status(200).json(farmers)
+   } catch (error) {
+    res.status(404).json('Farmer Not Found' +error)
+   }
+}
+module.exports = { AddFarmer, getFarmerProduct, getFarmers,searchFarmer };
