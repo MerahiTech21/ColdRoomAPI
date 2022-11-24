@@ -5,7 +5,6 @@ const WholeSaler = db.wholeSaler;
 const Address = db.address;
 
 const create = async (req, res) => { 
-  res.json('hii');
   var userInfo = {
     fName: req.body.fName,
     lName: req.body.lName,
@@ -91,9 +90,17 @@ const update = async (req, res) => {
     );
   }
 };
+const getWholeSaler=async(req,res)=>{
+  let id=req.params.id;
+  let wholeSaler=await WholeSaler.findOne({where:{
+     id:id
+  },attributes:{exclude: ['password','sex',"createdAt","updatedAt","addressId"]}})
+  res.status(200).json(wholeSaler);
+}
 
 module.exports = {
   create,
   getAccount,
   update,
+  getWholeSaler,
 };
