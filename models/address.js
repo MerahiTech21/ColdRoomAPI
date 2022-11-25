@@ -12,13 +12,11 @@ module.exports=(sequelize,DataTypes)=>{
         },
         woreda:{
             type:DataTypes.STRING,
-            allowNull:false
-
+           
         },
         kebele:{
             type:DataTypes.STRING,
-            allowNull:false
-
+          
         },
         location:{
             type:DataTypes.STRING,

@@ -97,8 +97,10 @@ db.productType.hasMany(db.farmerProduct)
 db.productType.belongsToMany(db.coldRoom,{through:db.coldRoomProduct });
 db.coldRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
 
-db.coldRoomProduct.belongsTo(db.coldRoom)
-db.coldRoomProduct.belongsTo(db.productType) 
+db.coldRoomProduct.belongsTo(db.coldRoom,{  onDelete: 'RESTRICT',
+onUpdate: 'RESTRICT'})
+db.coldRoomProduct.belongsTo(db.productType,{  onDelete: 'RESTRICT',
+onUpdate: 'RESTRICT'}) 
 
 ////
 

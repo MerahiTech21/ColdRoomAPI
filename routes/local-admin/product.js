@@ -4,6 +4,7 @@ const {SaveFarmerProduct,getFarmersProducts, getProductDetail, getProducts}=requ
 
 router.post('/',  SaveFarmerProduct);
 router.get('/',  getFarmersProducts);
+router.get('/for-filter',  getProducts);
 router.get('/:id',  getProductDetail);
-router.get('for-filter',  getProducts);
+
 module.exports=router 

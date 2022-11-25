@@ -20,14 +20,8 @@ const getOrders = async (req, res) => {
   try {
     const { page, perPage, search, coldRoomId, date,status } = req.query;
     const { limit, offset } = getPagination(page, perPage);
-    var searchCondition = search
-      ? {
-          [Op.or]: [
-            { fName: { [Op.like]: `%${search}%` } },
-            { lName: { [Op.like]: `%${search}%` } },
-          ],
-        }
-      : null;
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+
     var filterByColdRoom = coldRoomId ? { coldRoomId: coldRoomId } : null;
     var filterByDate = date ? {createdAt: { [Op.lte]: date }  } :null
     // var filterByStatus= status ? {[Op.or]:[{orderStatus:status} ,{orderStatus:status}]}:null

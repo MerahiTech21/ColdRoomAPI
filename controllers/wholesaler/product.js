@@ -11,7 +11,7 @@ const getProduct=async(req,res)=>{
     try{
         const allProduct=await Product.findAll(
            { attributes:{exclude:['createdAt','updatedAt']} }
-        );
+        ); 
         res.json(allProduct);
     }
     catch(err){

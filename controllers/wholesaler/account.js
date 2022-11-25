@@ -1,6 +1,6 @@
 const { db } = require("../../config/database");
 const bcrypt = require("bcrypt");
-
+const jwt=require('jsonwebtoken')
 const WholeSaler = db.wholeSaler;
 const Address = db.address;
 
@@ -31,18 +31,34 @@ const create = async (req, res) => {
     userInfo.addressId = addressId;
     let wholeSaler = await WholeSaler.create(userInfo);
     let address = await wholeSaler.getAddress();
+    const token = jwt.sign(
+      { id: wholeSaler.id, phoneNumber:wholeSaler.phoneNumber },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+   const user={
+      id: wholeSaler.id,
+      lName: wholeSaler.lName,
+      fName: wholeSaler.fName,
+      phoneNumber: wholeSaler.phoneNumber,
+    }
+    res
+      .status(200)
+      .json({user,accessToken: token});
 
-    res.status(200).json({wholeSaler,address});
     console.log("wholeSaler", JSON.stringify(wholeSaler));
   } catch (err) {
     console.log("Error while creating wholeSaler" + err);
-    return;
+    res.status(400).json("Error while creating wholeSaler" + err);
   }
 };
 
 const createAddress = async (address) => {
-  const newaddress = await Address.create(address);
-  return newaddress.id;
+  try {
+    const newaddress = await Address.create(address);
+    return newaddress.id;
+  } catch (error) {
+    throw "Error"+error;
+  }
 };
 
 const getAccount = async (req, res) => {

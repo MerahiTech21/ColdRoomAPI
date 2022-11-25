@@ -85,4 +85,37 @@ const Logout=async(req,res)=>{
 }
 } 
 
-module.exports={Login,Logout,myAccount}
+const changePassword=async(req,res)=>{
+
+  let newPassword=req.body.newPassword;
+  let oldPassword=req.body.oldPassword;
+
+  try{
+    
+    const employee=await Employee.findByPk(req.params.id)
+
+    if(!employee){
+      res.status(401).json("No Such Account Exist")
+      return
+    }
+    //decrept password and compare
+    const valide=await bcrypt.compare(oldPassword,employee.password)
+  //  res.json(valide);
+     if(! valide ){
+        res.status(401).json("Old Password Incorrect!")
+        return
+    }
+    let encryptedPassword = await bcrypt.hash(newPassword, 10);
+    employee.password=encryptedPassword
+    await employee.save()
+    res.status(200).json("Successfully Changed") 
+
+
+  }catch(err){
+    res.status(401).json("Internal Server Error") 
+    console.log('eror ',err)
+  }
+  
+
+}
+module.exports={Login,Logout,myAccount,changePassword}
