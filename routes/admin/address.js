@@ -5,4 +5,4 @@ const  AddressController=require('../../controllers/admin/address');
  router.get('/',AddressController.findAll);
 
 
- module.exports = router;
+ module.exports = router; 
