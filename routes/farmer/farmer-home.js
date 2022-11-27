@@ -10,4 +10,5 @@ router.post('/productType/:id',  farmerHomeController.getProductType);
 
 
 
+
 module.exports=router
