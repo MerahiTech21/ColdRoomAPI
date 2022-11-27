@@ -4,6 +4,7 @@ const Product =db.product;
 const ProductType=db.productType;
 const ColdRoomProduct=db.coldRoomProduct;
 const ColdRoom=db.coldRoom;
+const FarmerProduct=db.farmerProduct;
 const { fn } = require("sequelize");
 const { all } = require("../../routes");
 
@@ -49,13 +50,29 @@ const getProductDetail=async(req,res)=>{
                     ]  
                 }
             );
-           // res.json(coldRoomProduct);
+          //  res.json(coldRoomProduct);
             for(let cRProduct of coldRoomProduct){
                 const eachcRProduct={};
+               const quantities=await FarmerProduct.findAll(
+                   {
+                       where:{
+                           ProductId:cRProduct.productId,
+                           ProductTypeId:cRProduct.productTypeId,
+                           ColdRoomId:cRProduct.coldRoomId
+                       }
+                   }
+               );
+        //res.json(quantities);
+               let totalQuantity=0;
+               for(let qnty of quantities){
+                   totalQuantity=totalQuantity+qnty.currentQuantity;
 
+               }
                 eachcRProduct.coldRoomId=cRProduct.id;
                 eachcRProduct.price=cRProduct.price;
                 eachcRProduct.name=cRProduct.coldRoom.name;
+                eachcRProduct.quantity=totalQuantity;
+                
                 price.push(eachcRProduct);
             }
             eachProductType.coldRoomPrice=price;
