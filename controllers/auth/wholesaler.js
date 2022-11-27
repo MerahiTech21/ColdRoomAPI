@@ -38,8 +38,38 @@ const Login=async (req,res)=>{
   }
 }
 
-const Logout=(req,res)=>{
-    
+const changePassword=async(req,res)=>{
+
+  let newPassword=req.body.newPassword;
+  let oldPassword=req.body.oldPassword;
+
+  try{
+     
+    const wsaler=await WholeSaler.findByPk(req.params.id)
+
+    if(!wsaler){
+      res.status(401).json("No Such Account Exist")
+      return
+    }
+    //decrept password and compare
+    const valide=await bcrypt.compare(oldPassword,wsaler.password)
+  //  res.json(valide); 
+     if(! valide ){
+        res.status(401).json("Old Password Incorrect!")
+        return
+    }
+    let encryptedPassword = await bcrypt.hash(newPassword, 10);
+    wsaler.password=encryptedPassword
+    await wsaler.save()
+    res.status(200).json("Successfully Changed") 
+
+
+  }catch(err){
+    res.status(401).json("Internal Server Error "+err) 
+    console.log('eror ',err)
+  }
+  
+
 }
 
-module.exports={Login,Logout}
+module.exports={Login,changePassword}
