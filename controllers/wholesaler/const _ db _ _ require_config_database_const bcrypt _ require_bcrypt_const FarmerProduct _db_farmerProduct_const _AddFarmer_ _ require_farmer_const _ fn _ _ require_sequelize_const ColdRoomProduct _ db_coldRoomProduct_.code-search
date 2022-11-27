@@ -1,3 +1,0 @@
-# Query: const { db } = require("../../config/database");\nconst bcrypt = require("bcrypt");\nconst FarmerProduct =db.farmerProduct;\nconst {AddFarmer} = require("./farmer");\nconst { fn } = require("sequelize");\nconst ColdRoomProduct = db.coldRoomProduct;
-# ContextLines: 1
-
