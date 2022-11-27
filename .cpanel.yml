@@ -1,0 +1,6 @@
+---  
+deployment:    
+  tasks:  
+    - PATH={path_to_node}:$PATH  
+    - npm i  
+    - npm run build 

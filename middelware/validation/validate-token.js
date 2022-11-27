@@ -6,7 +6,7 @@ const ValidateToken=async(req,res,next)=>{
     
     try {
  
-    const authHeader=req.headers['authorization'] ?? null
+    const authHeader=req.headers['authorization'] ?req.headers['authorization'] : null
     // const token1=req.get('Authorization').split(' ')[1] //use try catch or if if no error with split
     if(! authHeader || authHeader === null ){
         res.status(401).json('UN Authorized')

@@ -34,7 +34,7 @@ const placeOrder = async (req, res) => {
             coldRoomId: req.body.coldRoomId,
           },
         });
-        totalPrice = totalPrice + Number(crProduct?.price);
+        totalPrice = totalPrice + (item.quantity * Number(crProduct?.price));
       } catch (error) {
         console.log("Error1 ", error);
       }
