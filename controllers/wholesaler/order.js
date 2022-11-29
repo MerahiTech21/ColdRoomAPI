@@ -1,4 +1,6 @@
+const { json } = require("sequelize");
 const { db } = require("../../config/database");
+const product = require("../../models/product");
 
 const WholeSaler = db.wholeSaler;
 const Order = db.order;
@@ -7,7 +9,8 @@ const FarmerProduct = db.farmerProduct;
 const ProductType = db.productType;
 const Product = db.product;
 const OrderItem = db.OrderItem;
-
+const OrderLog= db.OrderLog;
+//const Order=db.order
 // function for creating order of wholesaler
 const placeOrder = async (req, res) => {
   try {
@@ -177,5 +180,84 @@ const placeOrder = async (req, res) => {
   }
 };
 
+const orderHistory=async(req,res)=>{
+  try{
+     let orderHistories= await Order.findAll({
+       where:{wholeSalerId:req.params.id},
+       include:[{
+         model: OrderItem,
+         include:[{
+           model:FarmerProduct,
+           include:[{
+             model:Product,
+             //model:ProductType
+           },
+          {
+            model:ProductType,
+          }]
+          }]
+       }]
+     });
+    // res.json(orderHistories);
+     const allHistory=[];
+     for(let orderHistory of orderHistories){
+       let order={};
+       order.id=orderHistory.id;
+       order.orderCode=orderHistory.orderCode;
+       order.orderStatus=orderHistory.orderStatus;
+       order.paymentStatus=orderHistory.paymentStatus;
+       order.paidAmount=orderHistory.paidAmount;
+       order.totalPrice=orderHistory.totalPrice;
+       order.orderDate=orderHistory.createdAt;
+       let allItem=[];
+       for(let orderItem of orderHistory.orderItems){
+        let item={};
+        item.id=orderItem.id;
+        item.quantity=orderItem.quantity;
+        item.price=orderItem.price;
+        item.name=orderItem.farmerProduct.product.name;
+        item.type=orderItem.farmerProduct.productType.title;
+        
+        allItem.push(item);
+//res.json(item);
 
-module.exports = { placeOrder };
+       }
+       order.orderitems=allItem;
+       allHistory.push(order);
+       //res.json(allHistory);
+     }
+     res.json(allHistory);
+    //  for(let orderHistory of orderHistories){
+    //    let orderItems=orderHistory.orderItems;
+    //    for(let orderItem of orderItems){
+    //      let farmerProduct=await FarmerProduct.findOne({
+    //        where:{id:orderItem.farmerProductId}
+    //      });
+    //      let product=await Product.findOne({
+    //        where:{id:farmerProduct.productId}
+    //      });
+    //      const oi={...orderItem,name:'ddd'}
+    //      orderItem.name='dd';
+    //      res.json(orderItem);
+
+       //res.json(orderHistory);
+
+       
+     }
+
+     //res.json(orderHistories)
+   
+
+
+     
+  
+  catch(err){
+    res.json(err);
+  }
+}
+
+
+module.exports = {
+   placeOrder,
+   orderHistory,
+  };
