@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var cors=require('cors');
 //  const {db}=require('./config/database.js');
-
+ 
 var logger = require('morgan');
 // importing router index file
 var indexRouter = require('./routes/index');

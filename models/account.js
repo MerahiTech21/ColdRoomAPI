@@ -13,7 +13,7 @@ module.exports=(sequelize,DataTypes)=>{
 
     }
        
-
+ 
     )
     return account;
 
