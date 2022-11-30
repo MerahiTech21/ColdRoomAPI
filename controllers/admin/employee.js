@@ -9,7 +9,7 @@ const create = async (req, res) => {
     fName: req.body.fName,
     lName: req.body.lName,
     phoneNumber:req.body.phoneNumber,
-    sex: req.body.sex,
+    // sex: req.body.sex,
     email: req.body.email,
     role: req.body.role, 
   };
@@ -52,7 +52,9 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    let employees = await Employee.findAll({ attributes: { exclude: ["password"] },
+    let employees = await Employee.findAll({
+    
+      attributes: { exclude: ["password"] },
     include:[
       {
        model:db.coldRoom,

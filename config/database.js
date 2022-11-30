@@ -8,14 +8,14 @@ const db ={};
 
 try {
    sequelize.authenticate();
-   console.log('Sequelize Connection has been established successfully.');
+   console.log('Sequelize Connection has been established successfully.'); 
  } catch (error) {
    console.log('Sequelize Unable to connect to the database:');
  }
      
  try{  
  db.sequelize=sequelize;
- db.Sequelize=Sequelize;
+ db.Sequelize=Sequelize; 
  //importing a model
  db.product=require('../models/product.js')(sequelize,DataTypes);
  db.address=require('../models/address.js')(sequelize,DataTypes);
@@ -97,6 +97,8 @@ db.coldRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
 db.coldRoomProduct.belongsTo(db.coldRoom,{  onDelete: 'RESTRICT',
 onUpdate: 'RESTRICT'})
 db.coldRoomProduct.belongsTo(db.productType,{  onDelete: 'RESTRICT',
+onUpdate: 'RESTRICT'}) 
+db.productType.hasOne(db.coldRoomProduct,{  onDelete: 'RESTRICT',
 onUpdate: 'RESTRICT'}) 
 
 ////

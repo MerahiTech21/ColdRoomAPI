@@ -12,7 +12,7 @@ const getRevenue = async (req, res) => {
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
     var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
     var filterByDate= date ? {createdAt:{[Op.lte]:date}} : null
-
+ 
     const Revenues = await FarmerBalance.findAndCountAll({
       limit:limit, 
       offset:offset,

@@ -8,7 +8,7 @@ module.exports =(sequelize,Datatypes)=>{
             autoIncrement: true,
             allowNull: false
           },
-        quality:{
+          quality:{
            type:Datatypes.STRING,
            allowNull:false
          },

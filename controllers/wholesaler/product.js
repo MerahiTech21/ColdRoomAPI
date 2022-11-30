@@ -5,8 +5,7 @@ const ProductType=db.productType;
 const ColdRoomProduct=db.coldRoomProduct;
 const ColdRoom=db.coldRoom;
 const FarmerProduct=db.farmerProduct;
-const { fn } = require("sequelize");
-const { all } = require("../../routes");
+
 
 const getProduct=async(req,res)=>{
     try{
