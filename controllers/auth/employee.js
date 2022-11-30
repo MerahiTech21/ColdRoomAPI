@@ -199,4 +199,4 @@ const resetForgotPassword = async (req, res, next) => {
 
 
 
-module.exports={Login,Logout,myAccount,changePassword,forgotPassword,resetForgotPassword,verifyToken};
+module.exports={Login,Logout,myAccount,LocalAdminMyAccount,changePassword,forgotPassword,resetForgotPassword,verifyToken};
