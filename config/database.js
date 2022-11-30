@@ -3,7 +3,7 @@ const DataTypes=require('sequelize');
 //const coldRoom = require('../models/coldRoom.js');
 
 //  const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',});
-const sequelize= new Sequelize('merahitechnologi_cold_room','merahitechnologi_cold_room_user','C}LeGld72#_c',{dialect:'mysql',host:'109.70.148.34',port:'3306'});
+const sequelize= new Sequelize('merahitechnologi_cold_room_v0','merahitechnologi_cold_room_user','TxEIrmaZ4k(U',{dialect:'mysql',host:'109.70.148.34',port:'3306'});
 const db ={}; 
 
 try {
@@ -36,9 +36,6 @@ try {
  db.OrderPaymentLog=require('../models/order-payment-log')(sequelize,DataTypes);
  db.FarmerBalance=require('../models/farmer-balance')(sequelize,DataTypes);
  db.FarmerRent=require('../models/farmer-rent')(sequelize,DataTypes)
-
-
-
 
 //creating a relationship
 db.coldRoom.belongsTo(db.address,{

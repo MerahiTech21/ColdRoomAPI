@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt=require('jsonwebtoken')
 const WholeSaler = db.wholeSaler;
 const Address = db.address;
+const nodeMailer=require('nodemailer');
 
 const create = async (req, res) => { 
   var userInfo = {
@@ -98,9 +99,39 @@ const getWholeSaler=async(req,res)=>{
   res.status(200).json(wholeSaler);
 }
 
+
+const emailSend=async(req,res)=>{
+  res.json('hii');
+let mailTransporter= await nodeMailer.createTransport({
+   service: "gmail",
+   auth:{
+     user: "dayanyenesew@gmail.com",
+     password: "dayanmulu16",
+   }
+});
+
+let details={
+  from: "dayanyenesew@gmail.com",
+  to: "derejeseifu3030@gmail.com",
+  subject: "test",
+  text:"testing our first send"
+}
+  await mailTransporter.sendMail(details,(err)=>{
+  if(err){
+    console.log("hass an err");
+  }
+  else{
+    console.log("email send");
+  }
+
+})}
+
+
+
 module.exports = {
   create,
   getAccount,
   update,
   getWholeSaler,
+  emailSend
 };
