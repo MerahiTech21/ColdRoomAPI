@@ -10,7 +10,7 @@ router.get('/history',  getAllFarmerProduct);
 router.get('/:id',  getProductDetail);
 router.put('/:id',  editFarmerProduct);
 router.delete('/:id',  deleteFarmerProduct);
-router.post('/set-price/:id',  setProductTypePrice);
+router.post('/set-price',  setProductTypePrice);
 router.get('/get-price/:id',  getProductTypePrice);
 
 module.exports=router 

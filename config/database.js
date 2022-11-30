@@ -15,7 +15,7 @@ try {
      
  try{  
  db.sequelize=sequelize;
- db.Sequelize=Sequelize;
+ db.Sequelize=Sequelize; 
  //importing a model
  db.product=require('../models/product.js')(sequelize,DataTypes);
  db.address=require('../models/address.js')(sequelize,DataTypes);
