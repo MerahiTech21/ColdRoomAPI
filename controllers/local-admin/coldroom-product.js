@@ -1,28 +1,51 @@
+const { response } = require("express");
 const { db } = require("../../config/database");
 const ColdRoomProduct = db.coldRoomProduct;
 
-const ColdRoomProducts = async (req, res) => {
-  let cRoomId = req.params.id;
-  const cRoom = db.coldRoom.findByPk(cRoomId, { include: db.product });
-  let cRoomPrice = cRoom.getRent().price;
-  const products = cRoom.products;
-
-  products.map((product) => {
-    return {
-      name: product.name,
-      imageUrl: product.imageUrl,
-      productSalePrice: product.ColdRoomProduct.price,
-      productRentFee: cRoomPrice,
-    };
+const getProductTypePrice = async (req, res) => {
+try {
+  const crpp = await ColdRoomProduct.findAll({
+    where: { productId: req.params.id },
+    include: [
+      {
+        model:db.productType,
+        required:false,
+        right:true
+      },
+    ],
   });
-};
 
+  const pro=await db.productType.findAll({where:{productId:req.params.id},include:ColdRoomProduct})
+
+  res.json(pro)
+ 
+} catch (error) {
+  res.status(400).json('Error '+error)
+}
+}
 const setProductTypePrice = async (req, res) => {
   try {
-    const cRoomPrice = ColdRoomProduct.create({
-      productTypeId: req.body.productTypeId,
-      coldRoomId: req.body.coldRoomId,
+    const foundedProduct = ColdRoomProduct.findOne({
+      where: {
+        productTypeId: req.body.productTypeId,
+        coldRoomId: req.body.coldRoomId,
+      },
     });
-    res.status(201).json('successfully updated')
-  } catch (error) {}
+
+    if (!foundedProduct) {
+      const cRoomPrice = ColdRoomProduct.create({
+        productTypeId: req.body.productTypeId,
+        coldRoomId: req.body.coldRoomId,
+        price: req.body.price,
+      });
+      res.status(201).json("successfully created");
+    }
+    foundedProduct.price = req.body.price;
+    await foundedProduct.save();
+    res.status(201).json("successfully created");
+  } catch (error) {
+    res.status(400).json("Error While setting Price");
+  }
 };
+
+module.exports={getProductTypePrice,setProductTypePrice}

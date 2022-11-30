@@ -17,7 +17,7 @@ const ValidateToken=async(req,res,next)=>{
     }
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,async (err,decoded)=>{
         if(err){
-           return res.status(401).json('UN Authorized')
+           return res.status(401).json('UN Authorized '+err)
         } 
         
 

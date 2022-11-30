@@ -30,7 +30,7 @@ const getData = async (req, res) => {
     console.log("re", totalRevenue);
 
     res.json({
-      totalProduct: 10,
+      totalProduct: totalProduct,
       totalOrder: totalOrder,
       totalRevenue: totalRevenue,
     });
@@ -39,6 +39,7 @@ const getData = async (req, res) => {
     res.json(err);
   }
 };
+
 Date.prototype.subDays = function (days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() - days);

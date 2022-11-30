@@ -3,12 +3,12 @@ const DataTypes=require('sequelize');
 //const coldRoom = require('../models/coldRoom.js');
 
 //  const sequelize= new Sequelize('cold-room','root','',{dialect:'mysql',host:'localhost',port:'3306',});
-const sequelize= new Sequelize('merahitechnologi_cold_room','merahitechnologi_cold_room_user','C}LeGld72#_c',{dialect:'mysql',host:'109.70.148.34',port:'3306'});
+const sequelize= new Sequelize('merahitechnologi_cold_room_v0','merahitechnologi_cold_room_user','TxEIrmaZ4k(U',{dialect:'mysql',host:'109.70.148.34',port:'3306'});
 const db ={}; 
 
 try {
    sequelize.authenticate();
-   console.log('Sequelize Connection has been established successfully.');
+   console.log('Sequelize Connection has been established successfully.'); 
  } catch (error) {
    console.log('Sequelize Unable to connect to the database:');
  }
@@ -100,6 +100,8 @@ db.coldRoom.belongsToMany(db.productType,{through:db.coldRoomProduct});
 db.coldRoomProduct.belongsTo(db.coldRoom,{  onDelete: 'RESTRICT',
 onUpdate: 'RESTRICT'})
 db.coldRoomProduct.belongsTo(db.productType,{  onDelete: 'RESTRICT',
+onUpdate: 'RESTRICT'}) 
+db.productType.hasOne(db.coldRoomProduct,{  onDelete: 'RESTRICT',
 onUpdate: 'RESTRICT'}) 
 
 ////

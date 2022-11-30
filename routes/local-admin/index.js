@@ -7,14 +7,16 @@ const FarmerRentRouter=require('./farmer-rent')
 const FarmerRouter=require('./farmer')
 const RevenueRouter=require('./revenue')
 const SalesRouter=require('./sales')
-const WholeSalerRouter=require('./whole-saler')
+const WholeSalerRouter=require('./whole-saler');
+const { LocalAdminMyAccount } = require('../../controllers/auth/employee');
+const ValidateToken = require('../../middelware/validation/validate-token');
 
 router.use('/products', FarmerProductRouter);
-router.use('/orders',OrderRouter)
+router.use('/orders',ValidateToken,OrderRouter)
 
-router.use('/farmers',FarmerRouter)
-router.use('/wholesalers',WholeSalerRouter)
-router.use('/revenues',RevenueRouter)
-router.use('/sales',SalesRouter)
-
+router.use('/farmers',ValidateToken,FarmerRouter)
+router.use('/wholesalers',ValidateToken,WholeSalerRouter)
+router.use('/revenues',ValidateToken,RevenueRouter)
+router.use('/sales',ValidateToken,SalesRouter)
+router.use('/auth/my-account',ValidateToken,LocalAdminMyAccount)
 module.exports=router

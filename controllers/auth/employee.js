@@ -22,7 +22,7 @@ const Login=async (req,res)=>{
         res.status(401).json("Email or Password Incorrect!")
     }
     if(employee.role === 'admin'){
-      const token= jwt.sign({id:employee.id,email},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
+      const token= jwt.sign({id:employee.id,email},process.env.ACCESS_TOKEN_SECRET)
     
       res.status(200).json({id:employee.id,email:employee.email,token:token})
     }else{
@@ -53,6 +53,22 @@ const myAccount=async(req,res)=>{
     console.log('user',req.user)
   const employee=await db.employee.findByPk(req.user.id,{
     attributes:{exclude:['password']}
+  });
+  res.json(employee)
+  }catch(error){
+       res.status(400).json('Error '+error)
+  }
+
+}
+
+const LocalAdminMyAccount=async(req,res)=>{
+  try{
+    console.log('user',req.user)
+  const employee=await db.employee.findByPk(req.user.id,{
+    attributes:{exclude:['password']},
+    include:[{
+     model:ColdRoom
+    }]
   });
   res.json(employee)
   }catch(error){
@@ -118,4 +134,4 @@ const changePassword=async(req,res)=>{
   
 
 }
-module.exports={Login,Logout,myAccount,changePassword}
+module.exports={Login,Logout,myAccount,changePassword,LocalAdminMyAccount}

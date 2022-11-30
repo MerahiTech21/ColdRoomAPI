@@ -10,7 +10,7 @@ module.exports=(sequelize,DataTypes)=>{
         fName:{
             type:DataTypes.STRING,
             allowNull:false
-
+ 
         },
         lName:{
             type:DataTypes.STRING,
@@ -29,10 +29,10 @@ module.exports=(sequelize,DataTypes)=>{
             unique:true,
 
         },
-        sex:{
-            type:DataTypes.STRING,
-            allowNull:false,
-        },
+        // sex:{
+        //     type:DataTypes.STRING,
+        //     allowNull:false,
+        // },
         role:{
             type:DataTypes.STRING,
             allowNull:false,
