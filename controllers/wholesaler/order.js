@@ -115,7 +115,7 @@ const placeOrder = async (req, res) => {
           fitToSave = {
             quantity: requiredQuantity,
             // orderId: newOrder.id,
-            farmerProductId: productItem.farmerId,
+            farmerProductId: productItem.id,
             price: coldRoomProductPrice,
           };
  
@@ -138,7 +138,7 @@ const placeOrder = async (req, res) => {
           fitToSave = {
             quantity: productItem.currentQuantity,
             // orderId: newOrder.id,
-            farmerProductId: productItem.farmerId,
+            farmerProductId: productItem.id,
             price: coldRoomProductPrice,
           };
           //updating /decreasing product quantity

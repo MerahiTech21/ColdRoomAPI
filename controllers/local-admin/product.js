@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const FarmerProduct = db.farmerProduct;
 const { AddFarmer } = require("./farmer");
 const { fn } = require("sequelize");
+const { getPagination, getPagingData } = require("../admin/pagination/getPagination");
 const ColdRoomProduct = db.coldRoomProduct;
 
 const SaveFarmerProduct = async (req, res) => {
@@ -134,12 +135,22 @@ const getProductDetail = async (req, res) => {
 };
 const getAllFarmerProduct = async (req, res) => {
   try {
-    const fp = await FarmerProduct.findAll({
-      //attributes:['productId'],
-      //  where:{productId:req.params.id},
+
+    const {page,perPage,search,date,coldRoomId}=req.query 
+    const {limit,offset}=getPagination(page,perPage)
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+    var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
+    var filterByDate= date ? {createdAt:{[Op.lte]:date}} : null
+
+    const fp = await FarmerProduct.findAndCountAll({
+      limit:limit, 
+      offset:offset,
+       where:{...filterByColdRoom,...filterByDate},
+     
       include: [
         {
           model: db.farmer,
+          where:searchCondition,
           attributes: ["id", "fName", "lName"],
         },
         {
@@ -151,9 +162,11 @@ const getAllFarmerProduct = async (req, res) => {
           attributes: ["id", "name", "imageUrl"],
         },
       ],
-      //  group:['createdAt'],
     });
-    res.json(fp);
+
+    const paginated=getPagingData(fp,page,limit)
+
+    res.json(paginated);
   } catch (error) {
     console.log("Error " + error);
     res.status(404).json("Error " + error);
