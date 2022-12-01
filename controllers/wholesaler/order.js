@@ -108,8 +108,8 @@ const placeOrder = async (req, res) => {
         }
 
         if (
-          requiredQuantity > 0 &&
-          productItem.currentQuantity >= requiredQuantity &&
+          (requiredQuantity > 0) &&
+          (productItem.currentQuantity >= requiredQuantity) &&
           finished === 0
         ) {
           fitToSave = {
@@ -123,7 +123,7 @@ const placeOrder = async (req, res) => {
           //update the Quantity
         const update= await  FarmerProduct.update({
             'currentQuantity':  productItem.currentQuantity - requiredQuantity,
-            'soldQuantity': productItem.soldQuantity + requiredQuantity
+            'soldQuantity': productItem.soldQuantity*1 + requiredQuantity*1
         },{where:{id:productItem.id}})
         console.log('Quantity Updated',update)
 
@@ -134,7 +134,7 @@ const placeOrder = async (req, res) => {
     
         break;
           //return
-        } else if (!finished && productItem.currentQuantity > 0 && requiredQuantity > 0) {
+        } else if (!finished && (productItem.currentQuantity > 0) && (requiredQuantity > 0)) {
           fitToSave = {
             quantity: productItem.currentQuantity,
             // orderId: newOrder.id,
@@ -142,14 +142,16 @@ const placeOrder = async (req, res) => {
             price: coldRoomProductPrice,
           };
           //updating /decreasing product quantity
+          const remainingRequired=requiredQuantity - productItem.currentQuantity
           const update= await  FarmerProduct.update({
-            'currentQuantity':  productItem.currentQuantity - requiredQuantity,
+            // 'currentQuantity':  productItem.currentQuantity - requiredQuantity,
+            'currentQuantity':  0,
             'soldQuantity': productItem.soldQuantity + requiredQuantity
         },{where:{id:productItem.id}})
         console.log('Quantity Updated',update)
 
           console.log('fitToSave',fitToSave)
-          requiredQuantity -= productItem.currentQuantity;
+          requiredQuantity = remainingRequired;
 
           fitsToSave.push(fitToSave);
         }
@@ -171,7 +173,7 @@ const placeOrder = async (req, res) => {
          res.status(201).json({newOrder,newOrderItems});
     } catch (error) {
         console.log("Error In Creating Order Table", error);
-        res.status(400).json('Error While Placing Your Order')
+        res.status(400).json('Error While Placing Your Order '+error)
        }
 
  } catch (error) {
@@ -190,15 +192,14 @@ const orderHistory=async(req,res)=>{
            model:FarmerProduct,
            include:[{
              model:Product,
-             //model:ProductType
            },
           {
             model:ProductType,
           }]
           }]
-       }]
+       }],
+       order:[['createdAt','DESC']]
      });
-    // res.json(orderHistories);
      const allHistory=[];
      for(let orderHistory of orderHistories){
        let order={};
@@ -219,7 +220,6 @@ const orderHistory=async(req,res)=>{
         item.type=orderItem.farmerProduct.productType.title;
         
         allItem.push(item);
-//res.json(item);
 
        }
        order.orderitems=allItem;
@@ -227,37 +227,23 @@ const orderHistory=async(req,res)=>{
        //res.json(allHistory);
      }
      res.json(allHistory);
-    //  for(let orderHistory of orderHistories){
-    //    let orderItems=orderHistory.orderItems;
-    //    for(let orderItem of orderItems){
-    //      let farmerProduct=await FarmerProduct.findOne({
-    //        where:{id:orderItem.farmerProductId}
-    //      });
-    //      let product=await Product.findOne({
-    //        where:{id:farmerProduct.productId}
-    //      });
-    //      const oi={...orderItem,name:'ddd'}
-    //      orderItem.name='dd';
-    //      res.json(orderItem);
-
-       //res.json(orderHistory);
-
-       
-     }
-
-     //res.json(orderHistories)
-   
-
-
-     
+    
+     }      
   
   catch(err){
     res.json(err);
   }
 }
-
+const changeOrderStatus=async(req,res)=>{
+  let order=await Order.findOne({where:{id:req.params.id}});
+  order.orderStatus="canceled";
+   await order.save();
+  res.json(order);
+}
 
 module.exports = {
    placeOrder,
    orderHistory,
+   changeOrderStatus
   };
+  

@@ -67,7 +67,7 @@ const getProductDetail=async(req,res)=>{
                    totalQuantity=totalQuantity+qnty.currentQuantity;
 
                }
-                eachcRProduct.coldRoomId=cRProduct.id;
+                eachcRProduct.coldRoomId=cRProduct.coldRoomId;
                 eachcRProduct.price=cRProduct.price;
                 eachcRProduct.name=cRProduct.coldRoom.name;
                 eachcRProduct.quantity=totalQuantity;

@@ -102,10 +102,10 @@ const updateOrderStatus = async (req, res) => {
       const order = await Order.findByPk(orderId);
       if (order) {
         prevStatus = order.orderStatus;
-        //  if (prevStatus === 'completed') {
-        //   res.status(403).json('Impossible to Change Completed Order')
-        //   return
-        //  }
+         if (prevStatus === 'completed') {
+          res.status(403).json('Impossible to Change Completed Order')
+          return
+         }
         order.orderStatus = req.body.orderStatus;
          await order.save();
       
@@ -184,31 +184,37 @@ const setFarmerBalance = async (order) => {
 };
 const updatePaymentStatus = async (req, res) => {
   try {
-    let user = { fName: "Alemu", lName: "Tebkew" };
+    let user = await db.employee.findByPk(req.body.changedBy);
     // let user=req.user
     const orderId = req.params.id;
     let prevStatus;
     if (orderId) {
       const order = await Order.findByPk(orderId);
       prevStatus = order.paymentStatus;
-      if (order) {
-        order.paidAmount += Number(req.body.paidAmount);
-        order.save();
 
-        if (order.totalPrice === order.paidAmount) {
-          order.paymentStatus = "fullyPaid";
-          order.save();
-        } else if (order.paidAmount < order.totalPrice) {
+
+      if (order) {
+        
+      if(order.paidAmount*1 + Number(req.body.amount) > order.totalPrice ){
+             return res.status(403).json('Don\'t Enter Greater Than total Price')
+
+      }
+        order.paidAmount += Number(req.body.amount);
+        await order.save();
+        if (order.totalPrice*1 === order.paidAmount*1) {
+          order.paymentStatus = "paid";
+          await order.save();
+        } else if (order.paidAmount*1 < order.totalPrice*1) {
           order.paymentStatus = "partiallyPaid";
-          order.save();
+          await order.save();
         }
 
-        OrderPaymentLog.create({
-          paidAmount: req.body.paidAmount,
+        const paymentLog=await OrderPaymentLog.create({
+          paidAmount: req.body.amount,
           changedBy: user.fName + " " + user.lName,
           orderId: orderId,
         });
-        res.json("order status updated");
+        res.json({paymentLog,paymentStatus:order.paymentStatus});
       }
     }
   } catch (error) {

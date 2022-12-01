@@ -19,4 +19,4 @@ router.use('/wholesalers',ValidateToken,WholeSalerRouter)
 router.use('/revenues',ValidateToken,RevenueRouter)
 router.use('/sales',ValidateToken,SalesRouter)
 router.use('/auth/my-account',ValidateToken,LocalAdminMyAccount)
-module.exports=router
+module.exports=router 

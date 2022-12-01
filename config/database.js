@@ -37,9 +37,6 @@ try {
  db.FarmerBalance=require('../models/farmer-balance')(sequelize,DataTypes);
  db.FarmerRent=require('../models/farmer-rent')(sequelize,DataTypes)
 
-
-
-
 //creating a relationship
 db.coldRoom.belongsTo(db.address,{
   foreignKey:'addressId',

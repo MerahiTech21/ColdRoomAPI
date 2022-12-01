@@ -162,6 +162,7 @@ const getSoldProduct=async (req,res)=>{
                 model:ProductType
                  }]
            });
+        return res.json(SProduct)
            for(let sp of SProduct){
               // let p=Product.findAll()
                //res.json(sp.product.name);  
@@ -175,7 +176,7 @@ const getSoldProduct=async (req,res)=>{
                    quality:sp.quality,
                    image:sp.product.imageUrl,
                    soldAmount:sp.soldQuantity,
-                   soldPrice:sp.soldQuantity*sp.pricePerKg,
+                   soldPrice:Math.ceil(farmerBal.balanceAmount/farmerBal.quantity),
                    rentCost:rent.rentAmount,    
                    date:sp.updatedAt,
                    netBalance:netBal,
@@ -193,13 +194,13 @@ const getSoldProduct=async (req,res)=>{
         //console.log(allSold);
              //console.log(allSold);
 
-           res.json(allSold);
+           res.status(200).json(allSold);
 
            //res.json(allSold);
         
 
     }catch(err){
-       res.json(err)
+       res.status(200).json("Error "+err)
     }
 
 }

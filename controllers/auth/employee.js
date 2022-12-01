@@ -1,6 +1,7 @@
 const {db}=require('../../config/database');
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken');
+const employee = require('../../models/employee');
 const Employee = db.employee;
 const ColdRoom = db.coldRoom;
 
@@ -133,5 +134,69 @@ const changePassword=async(req,res)=>{
   }
   
 
+
 }
-module.exports={Login,Logout,myAccount,changePassword,LocalAdminMyAccount}
+ const forgotPassword = async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    const user = await Employee.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ msg: `User not found with email=${email}` });
+    }
+    const token = Math.floor(100000 + Math.random() * 900000);
+    Employee.resetToken = token;
+    await Employee.save();
+
+    await sendEmail(user.email, "Password Reset", `${token}`);
+    // await sendSMS('+251975752668',"Here we go")
+    res.status(200).send(`We have sent email to ${user.email}`);
+  } catch (e) {
+    res.status(400).send(e.toString());
+  }
+
+};
+
+const verifyToken = async (req, res, next) => {
+  const { tokenCode, email } = req.body;
+  const user = await Employee.findOne({ where: { email } });
+  if (!user) {
+    return res.status(404).json({ msg: `User not found with email=${email}` });
+  }
+  //it should be compared by jwt
+  if (!tokenCode === Employee.resetToken) {
+    return res.status(400).json({ msg: 'invalid or expired token' })
+  }
+   user.resetToken='';
+  await user.save();
+  const token = jwt.sign({ ...user.dataValues }, process.env.Access_TOKEN_SECURE);
+  res.status(200).json({ token, name: user.name, email: user.email, phoneNo: user.phoneNo })
+  // let it loign 
+};
+
+
+const resetForgotPassword = async (req, res, next) => {
+  try{
+    const { newPassword } = req.body;
+  const user = await Employee.findByPk(req.user.id);
+  if(!user) return res.status(404).json({msg:"faild", user: req.user});
+  bcrypt.hash(newPassword, 10, (err, hash) => {
+    if (err) {
+      return res.status(500).json({ error: err.toString() })
+    } else {
+      user.password = hash;
+      user.save().then((user) => {
+        return res.status(200).json({ msg:"Password is changed successfully"});
+      });
+
+    }
+  })
+  }catch(e){
+   res.status(400).json({error:e})
+  }
+
+};
+
+
+
+
+module.exports={Login,Logout,myAccount,LocalAdminMyAccount,changePassword,forgotPassword,resetForgotPassword,verifyToken};

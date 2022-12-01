@@ -5,4 +5,4 @@ const Router=express.Router()
 Router.get('/',getSales)
 
 
-module.exports = Router
+module.exports = Router 

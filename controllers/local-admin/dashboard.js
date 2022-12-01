@@ -57,7 +57,9 @@ const bargraphData = async (req, res) => {
           sequelize.fn("YEAR", sequelize.col("createdAt")),
           year
         ),
-        coldRoomId:req.query.coldRoomId
+        coldRoomId:req.query.coldRoomId,
+        status:'completed'
+
       },
       attributes: [
         [sequelize.fn("MONTHNAME", sequelize.col("createdAt")), "month"],
@@ -96,11 +98,12 @@ const pichartData = async (req, res) => {
           include: [{ model: db.product, attributes: ["name"] }],
         //    right:true,
           required: true
-        },
+        }, 
         {
           model: db.order,
           attributes: ['id'],
-          where:{coldRoomId:req.query.coldRoomId},
+          where:{coldRoomId:req.query.coldRoomId, orderStatus:'completed'
+        },
         //    right:true,
           required: true
         },
