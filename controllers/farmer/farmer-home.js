@@ -64,15 +64,15 @@ const getFarmerProduct=async (req,res)=>{
              }]
 
         });
-        for(let FarmerProduct of FProducts){
-        let rent=await FarmerRent.findOne({where:{farmerProductId:req.params.id}});
-        let rentAmount=rent.rentAmount;
+        for(let farmerProduct of FProducts){
+        let rent=await FarmerRent.findOne({where:{farmerProductId:farmerProduct.id}});
+        let rentAmount=rent ? rent.rentAmount : 0;
 
            let product={
-            id:FarmerProduct.product.id,
-            name:FarmerProduct.product.name,
-            image:FarmerProduct.product.imageUrl,
-               remainingQuantity:FarmerProduct.currentQuantity,
+            id:farmerProduct.product.id,
+            name:farmerProduct.product.name,
+            image:farmerProduct.product.imageUrl,
+               remainingQuantity:farmerProduct.currentQuantity,
                rentPrice:rentAmount,
                
            };
@@ -85,7 +85,7 @@ const getFarmerProduct=async (req,res)=>{
     }
     catch(err){
         
-
+      res.status(400).json("Error "+err)
     }
 
 };
@@ -98,7 +98,7 @@ const getProductType=async(req,res)=>{
    //res.json(req.body);
     let allProdType=[];
     try{
-        let id=req.body.ProductId
+        let id=req.body.productId
         const ProdTypes= await FarmerProduct.findAll({where:{
          farmerId:req.params.id,
            productId:id

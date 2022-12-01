@@ -1,5 +1,6 @@
 const {db} = require("../../config/database");
 const bcrypt = require("bcrypt");
+const { Op } = require("sequelize");
 
 const Employee = db.employee;
 
@@ -53,7 +54,7 @@ const create = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     let employees = await Employee.findAll({
-    
+      where:{role:{[Op.ne]:'admin'}},
       attributes: { exclude: ["password"] },
     include:[
       {

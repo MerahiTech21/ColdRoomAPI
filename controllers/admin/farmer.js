@@ -8,7 +8,7 @@ const FarmerRent= db.FarmerRent
 const FarmerProduct=db.farmerProduct
 const ProductType=db.productType
 const getFarmers=async(req,res)=>{
- 
+      
   try {
     const search=req.query.search
 

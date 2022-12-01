@@ -8,12 +8,7 @@ const Order =db.order
 
 const getWholeSalers = async (req, res) => {
   try {
-    // const coldRoomId=req.user.coldRoomId
-
-    // if (!coldRoomId) {
-    //   res.status(404).json('Error ')
-
-    // }
+ 
     const search=req.query.search
 
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;

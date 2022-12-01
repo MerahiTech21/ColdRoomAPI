@@ -7,7 +7,7 @@ const getData = async (req, res) => {
 
     console.log(date.subDays(30));
 
-    const totalProduct = await db.product.count();
+    const totalProduct = await db.product.count({});
     console.log("Pro", totalProduct);
 
     const totalOrder = await db.order.count({
@@ -15,7 +15,9 @@ const getData = async (req, res) => {
         createdAt: {
           // [Op.gte]: "2022-11-01 02:29:14"
           [Op.gt]: date.subDays(30).toISOString(),
+          
         },
+        coldRoomId:req.query.coldRoomId
       },
     });
     console.log("o", totalOrder);
@@ -55,6 +57,7 @@ const bargraphData = async (req, res) => {
           sequelize.fn("YEAR", sequelize.col("createdAt")),
           year
         ),
+        coldRoomId:req.query.coldRoomId
       },
       attributes: [
         [sequelize.fn("MONTHNAME", sequelize.col("createdAt")), "month"],
@@ -94,9 +97,15 @@ const pichartData = async (req, res) => {
         //    right:true,
           required: true
         },
-        // {
-        //  attributes:[]
-        // }
+        {
+          model: db.order,
+          attributes: ['id'],
+          where:{coldRoomId:req.query.coldRoomId},
+        //    right:true,
+          required: true
+        },
+    
+        
       ],
       order: [["soldQuantity", "Desc"]],
       group: [db.Sequelize.col("name", { model: db.product })],
@@ -113,6 +122,14 @@ const pichartData = async (req, res) => {
               ),
               year
             ),
+
+          },
+          include:{
+            model:db.order,
+            where:{
+              coldRoomId:req.query.coldRoomId,
+              required:true
+            }
           }
       })
     res.json({total,sales:orders});

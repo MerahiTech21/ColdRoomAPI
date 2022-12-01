@@ -23,8 +23,8 @@ const getOrders = async (req, res) => {
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
 
     var filterByColdRoom = coldRoomId ? { coldRoomId: coldRoomId } : null;
-    var filterByDate = date ? {createdAt: { [Op.lte]: date }  } :null
-    // var filterByStatus= status ? {[Op.or]:[{orderStatus:status} ,{orderStatus:status}]}:null
+    var filterByDate = date ? {createdAt: { [Op.gte]: date }  } :null
+    var filterByStatus= status ? {[Op.or]:[{orderStatus:status} ,{orderStatus:status}]}:null
     var filterByStatus = status ? { [Op.or]:[{orderStatus:status} ,{paymentStatus:status} ]} : null;
 
  
@@ -34,8 +34,8 @@ const getOrders = async (req, res) => {
           }
           ,
          
-      limit: limit,
-      offset: offset,
+      // limit: limit,
+      // offset: offset,
       attributes: { exclude: [ "wholeSalerId", "updatedAt"] },
       include: [ 
         {
@@ -47,7 +47,7 @@ const getOrders = async (req, res) => {
           model: ColdRoom,
           as: "coldRoom",
           attributes: ["id", "name"],
-          required:true
+          // required:true
           // include:[{model:Address,as:'address'}]
         },        {
           model: OrderLog,
@@ -64,7 +64,7 @@ const getOrders = async (req, res) => {
   } catch (err) {
     res.status(400).json("Error While Fetching  Orders" + err);
   }
-};
+}
 
 const getOrder = async (req, res) => {
   try {
@@ -77,7 +77,10 @@ const getOrder = async (req, res) => {
           include: [
             { 
               model: FarmerProduct,
-              include:[Product,ProductType] }] },
+              include:[Product,ProductType] 
+            }
+          ]
+         },
       ],
     });
     res.status(200).json(orders);
