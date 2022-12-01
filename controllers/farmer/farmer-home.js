@@ -64,15 +64,15 @@ const getFarmerProduct=async (req,res)=>{
              }]
 
         });
-        for(let FarmerProduct of FProducts){
-        let rent=await FarmerRent.findOne({where:{farmerProductId:req.params.id}});
-        let rentAmount=rent.rentAmount;
+        for(let farmerProduct of FProducts){
+        let rent=await FarmerRent.findOne({where:{farmerProductId:farmerProduct.id}});
+        let rentAmount=rent ? rent.rentAmount : 0;
 
            let product={
-            id:FarmerProduct.product.id,
-            name:FarmerProduct.product.name,
-            image:FarmerProduct.product.imageUrl,
-               remainingQuantity:FarmerProduct.currentQuantity,
+            id:farmerProduct.product.id,
+            name:farmerProduct.product.name,
+            image:farmerProduct.product.imageUrl,
+               remainingQuantity:farmerProduct.currentQuantity,
                rentPrice:rentAmount,
                
            };
@@ -85,7 +85,7 @@ const getFarmerProduct=async (req,res)=>{
     }
     catch(err){
         
-
+      res.status(400).json("Error "+err)
     }
 
 };
@@ -98,7 +98,7 @@ const getProductType=async(req,res)=>{
    //res.json(req.body);
     let allProdType=[];
     try{
-        let id=req.body.ProductId
+        let id=req.body.productId
         const ProdTypes= await FarmerProduct.findAll({where:{
          farmerId:req.params.id,
            productId:id
@@ -161,6 +161,7 @@ const getSoldProduct=async (req,res)=>{
                 model:ProductType
                  }]
            });
+        return res.json(SProduct)
            for(let sp of SProduct){
               // let p=Product.findAll()
                //res.json(sp.product.name);
@@ -207,13 +208,13 @@ const getSoldProduct=async (req,res)=>{
         //console.log(allSold);
              //console.log(allSold);
 
-           res.json(allSold);
+           res.status(200).json(allSold);
 
            //res.json(allSold);
         
 
     }catch(err){
-       res.json(err)
+       res.status(200).json("Error "+err)
     }
 
 }

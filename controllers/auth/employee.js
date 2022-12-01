@@ -23,14 +23,14 @@ const Login=async (req,res)=>{
         res.status(401).json("Email or Password Incorrect!")
     }
     if(employee.role === 'admin'){
-      const token= jwt.sign({id:employee.id,email},process.env.ACCESS_TOKEN_SECRET,{expiredIn:'10h'})
+      const token= jwt.sign({id:employee.id,email},process.env.ACCESS_TOKEN_SECRET)
     
       res.status(200).json({id:employee.id,email:employee.email,token:token})
     }else{
       const coldRoom=await ColdRoom.findOne({where:{employeeId:employee.id}})
       if(coldRoom){
          
-      const token= jwt.sign({id:employee.id,email,coldRoomId:employee.coldRoomId},process.env.ACCESS_TOKEN_SECRET,{expiredIn:'10h'})
+      const token= jwt.sign({id:employee.id,email,coldRoomId:employee.coldRoomId},process.env.ACCESS_TOKEN_SECRET)
       // employee.tokens=employee.tokens.concat({token})
       //  await employee.save();
 

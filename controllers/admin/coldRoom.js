@@ -157,7 +157,7 @@ const getAll = async (req, res) => {
     // const procount=Produ
     const search = req.query.search;
     var searchCondition = search
-      ? { name: { [Op.like]: `%${search}%` } }
+      ? { name: { [Op.substring]: search } }
       : null;
 
     const coldRooms = await ColdRoom.findAll({

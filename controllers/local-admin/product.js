@@ -2,7 +2,7 @@ const { db } = require("../../config/database");
 const bcrypt = require("bcrypt");
 const FarmerProduct = db.farmerProduct;
 const { AddFarmer } = require("./farmer");
-const { fn } = require("sequelize");
+const { fn, Op } = require("sequelize");
 const { getPagination, getPagingData } = require("../admin/pagination/getPagination");
 const ColdRoomProduct = db.coldRoomProduct;
 
@@ -82,6 +82,12 @@ const deleteFarmerProduct = async (req, res) => {
 
 const getFarmersProducts = async (req, res) => {
   try {
+
+    const search = req.query.search;
+    var searchCondition = search
+      ? { name: { [Op.substring]: search } }
+      : null;
+
     const coldRoomId = req.query.coldRoomId;
     console.log("cli", coldRoomId);
     if (!coldRoomId) {
@@ -100,6 +106,7 @@ const getFarmersProducts = async (req, res) => {
       include: [
         {
           model: db.product,
+          where:searchCondition,
           attributes: ["name", "imageUrl"],
         },
       ],
@@ -140,7 +147,7 @@ const getAllFarmerProduct = async (req, res) => {
     const {limit,offset}=getPagination(page,perPage)
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
     var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
-    var filterByDate= date ? {createdAt:{[Op.lte]:date}} : null
+    var filterByDate= date ? {createdAt:{[Op.gte]:date}} : null
 
     const fp = await FarmerProduct.findAndCountAll({
       limit:limit, 

@@ -108,8 +108,8 @@ const placeOrder = async (req, res) => {
         }
 
         if (
-          requiredQuantity > 0 &&
-          productItem.currentQuantity >= requiredQuantity &&
+          (requiredQuantity > 0) &&
+          (productItem.currentQuantity >= requiredQuantity) &&
           finished === 0
         ) {
           fitToSave = {
@@ -123,7 +123,7 @@ const placeOrder = async (req, res) => {
           //update the Quantity
         const update= await  FarmerProduct.update({
             'currentQuantity':  productItem.currentQuantity - requiredQuantity,
-            'soldQuantity': productItem.soldQuantity + requiredQuantity
+            'soldQuantity': productItem.soldQuantity*1 + requiredQuantity*1
         },{where:{id:productItem.id}})
         console.log('Quantity Updated',update)
 
@@ -134,7 +134,7 @@ const placeOrder = async (req, res) => {
     
         break;
           //return
-        } else if (!finished && productItem.currentQuantity > 0 && requiredQuantity > 0) {
+        } else if (!finished && (productItem.currentQuantity > 0) && (requiredQuantity > 0)) {
           fitToSave = {
             quantity: productItem.currentQuantity,
             // orderId: newOrder.id,
@@ -142,14 +142,16 @@ const placeOrder = async (req, res) => {
             price: coldRoomProductPrice,
           };
           //updating /decreasing product quantity
+          const remainingRequired=requiredQuantity - productItem.currentQuantity
           const update= await  FarmerProduct.update({
-            'currentQuantity':  productItem.currentQuantity - requiredQuantity,
+            // 'currentQuantity':  productItem.currentQuantity - requiredQuantity,
+            'currentQuantity':  0,
             'soldQuantity': productItem.soldQuantity + requiredQuantity
         },{where:{id:productItem.id}})
         console.log('Quantity Updated',update)
 
           console.log('fitToSave',fitToSave)
-          requiredQuantity -= productItem.currentQuantity;
+          requiredQuantity = remainingRequired;
 
           fitsToSave.push(fitToSave);
         }
@@ -171,7 +173,7 @@ const placeOrder = async (req, res) => {
          res.status(201).json({newOrder,newOrderItems});
     } catch (error) {
         console.log("Error In Creating Order Table", error);
-        res.status(400).json('Error While Placing Your Order')
+        res.status(400).json('Error While Placing Your Order '+error)
        }
 
  } catch (error) {

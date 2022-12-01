@@ -13,7 +13,7 @@ const getSales = async (req, res) => {
     const {limit,offset}=getPagination(page,perPage)
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
     var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
-    var filterByDate= date ? {createdAt:{[Op.lte]:date}} : null
+    var filterByDate= date ? {createdAt:{[Op.gte]:date}} : null
      var filterByStatus={orderStatus:'completed'}
     const sales = await Order.findAndCountAll({
       attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },

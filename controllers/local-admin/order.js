@@ -1,4 +1,6 @@
+const { Op } = require("sequelize");
 const { db } = require("../../config/database");
+const { getPagination, getPagingData } = require("../admin/pagination/getPagination");
 
 const WholeSaler = db.wholeSaler;
 const Order = db.order;
@@ -11,40 +13,73 @@ const OrderLog = db.OrderLog;
 const OrderPaymentLog = db.OrderPaymentLog;
 const FarmerBalance = db.FarmerBalance;
 const FarmerRent = db.FarmerRent;
+const ColdRoom = db.coldRoom;
 
 const getOrders = async (req, res) => {
   try {
+    const { page, perPage, search, coldRoomId, date,status } = req.query;
+    const { limit, offset } = getPagination(page, perPage);
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
 
-    const coldRoomId=req.user.coldRoomId
+    var filterByColdRoom = coldRoomId ? { coldRoomId: coldRoomId } : null;
+    var filterByDate = date ? {createdAt: { [Op.gte]: date }  } :null
+    // var filterByStatus= status ? {[Op.or]:[{orderStatus:status} ,{orderStatus:status}]}:null
+    var filterByStatus = status ? { [Op.or]:[{orderStatus:status} ,{paymentStatus:status} ]} : null;
 
-    if (!coldRoomId) {
-      res.status(404).json('Error ')
-
-    }
-    const orders = await Order.findAll({
-      where:{coldRoomId:coldRoomId}, 
-      attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },
-      include: [
+ 
+    const orders = await Order.findAndCountAll({
+          where:{
+            ...filterByStatus,...filterByColdRoom,...filterByDate
+          }
+          ,
+         
+      // limit: limit,
+      // offset: offset,
+      attributes: { exclude: [ "wholeSalerId", "updatedAt"] },
+      include: [ 
         {
           model: WholeSaler,
           attributes: ["fName", "lName"],
+          where:searchCondition
+        },
+        {
+          model: ColdRoom,
+          as: "coldRoom",
+          attributes: ["id", "name"],
+          where:{
+            id:req.query.coldRoomId
+          },
+          required:true
+          // include:[{model:Address,as:'address'}]
+        },        {
+          model: OrderLog,
+    
+        },        {
+          model: OrderPaymentLog,
+      
         },
       ],
     });
-    res.status(200).json(orders);
+
+    const paginated=getPagingData(orders,page,limit)
+    res.status(200).json(paginated);
   } catch (err) {
-    res.status(400).json("Error While Fetching  Orders");
+    res.status(400).json("Error While Fetching  Orders" + err);
   }
-};
+}
 
 const getOrder = async (req, res) => {
   try {
     const orders = await Order.findOne({
-      where: { id: 45 },
+      where: { id: req.params.id },
       attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },
       include: [
         { model: WholeSaler, attributes: ["fName", "lName"] },
-        { model: OrderItem, include: [{ model: FarmerProduct }] },
+        { model: OrderItem, 
+          include: [
+            { 
+              model: FarmerProduct,
+              include:[Product,ProductType] }] },
       ],
     });
     res.status(200).json(orders);
@@ -54,10 +89,12 @@ const getOrder = async (req, res) => {
 };
 
 
+
 const updateOrderStatus = async (req, res) => {
   try {
-    // let user=req.user
-    let user = { fName: "Alemu", lName: "Tebkew" };
+    //  let user=req.user
+
+    let user = await db.employee.findByPk(req.body.changedBy);
 
     const orderId = req.params.id;
     let prevStatus;
@@ -65,11 +102,14 @@ const updateOrderStatus = async (req, res) => {
       const order = await Order.findByPk(orderId);
       if (order) {
         prevStatus = order.orderStatus;
-
+         if (prevStatus === 'completed') {
+          res.status(403).json('Impossible to Change Completed Order')
+          return
+         }
         order.orderStatus = req.body.orderStatus;
-        order.save();
+         await order.save();
       
-        OrderLog.create({
+       const orderLog= await OrderLog.create({
           changedFrom: prevStatus,
           changedTo: req.body.orderStatus,
           changedBy: user.fName + " " + user.lName,
@@ -82,7 +122,7 @@ const updateOrderStatus = async (req, res) => {
          console.log('completed2')
 
         }
-        res.json("order status updated");
+        res.json(orderLog);
       } else {
         res.status(404).json("No Order with this id  ");
       }
@@ -97,7 +137,9 @@ const updateOrderStatus = async (req, res) => {
 const setFarmerBalance = async (order) => {
 
   try {
-    let orderItems = await order.getOrderItems();
+    let orderItems = await OrderItem.findAll({where:{orderId:order.id},include:{model:FarmerProduct}})
+    const rent=await db.rent.findOne({where:{coldRoomId:order.coldRoomId}})
+
     console.log('orderItems',orderItems)
     let balanceDatas=[];
     let rentDatas=[];
@@ -109,19 +151,19 @@ const setFarmerBalance = async (order) => {
         quantity: orderItem.quantity,
         balanceAmount: orderItem.price * orderItem.quantity,
         state: 0,
-        farmerId: 1,
-        // farmerId: orderItem.farmerProduct.farmerId,
+        farmerId: orderItem.farmerProduct.farmerId,
+         coldRoomId: order.coldRoomId,
         farmerProductId: orderItem.farmerProductId,
       };
 
       const rentData = {
         orderItemId: orderItem.id,
         quantity: orderItem.quantity,
-        rentPrice: 0.2,
-        rentAmount: orderItem.quantity * 0.2,
-        state: "not paid",
-        farmerId: 1,
-        // farmerId: orderItem.getFarmerProduct().farmerId,
+        rentPrice: rent ? rent.price : 10,
+        rentAmount: orderItem.quantity * rent.price,
+        state: 0,
+        farmerId: orderItem.farmerProduct.farmerId,
+        coldRoomId: order.coldRoomId,
         farmerProductId: orderItem.farmerProductId,
       };
 
@@ -142,31 +184,37 @@ const setFarmerBalance = async (order) => {
 };
 const updatePaymentStatus = async (req, res) => {
   try {
-    let user = { fName: "Alemu", lName: "Tebkew" };
+    let user = await db.employee.findByPk(req.body.changedBy);
     // let user=req.user
     const orderId = req.params.id;
     let prevStatus;
     if (orderId) {
       const order = await Order.findByPk(orderId);
       prevStatus = order.paymentStatus;
-      if (order) {
-        order.paidAmount += Number(req.body.paidAmount);
-        order.save();
 
-        if (order.totalPrice === order.paidAmount) {
-          order.paymentStatus = "fullyPaid";
-          order.save();
-        } else if (order.paidAmount < order.totalPrice) {
+
+      if (order) {
+        
+      if(order.paidAmount*1 + Number(req.body.amount) > order.totalPrice ){
+             return res.status(403).json('Don\'t Enter Greater Than total Price')
+
+      }
+        order.paidAmount += Number(req.body.amount);
+        await order.save();
+        if (order.totalPrice*1 === order.paidAmount*1) {
+          order.paymentStatus = "paid";
+          await order.save();
+        } else if (order.paidAmount*1 < order.totalPrice*1) {
           order.paymentStatus = "partiallyPaid";
-          order.save();
+          await order.save();
         }
 
-        OrderPaymentLog.create({
-          paidAmount: req.body.paidAmount,
+        const paymentLog=await OrderPaymentLog.create({
+          paidAmount: req.body.amount,
           changedBy: user.fName + " " + user.lName,
           orderId: orderId,
         });
-        res.json("order status updated");
+        res.json({paymentLog,paymentStatus:order.paymentStatus});
       }
     }
   } catch (error) {

@@ -36,19 +36,33 @@ const changePhoneNumber=async(req,res)=>{
 
 
 const changePassword=async(req,res)=>{
+    let newPassword=req.body.newPassword;
+    let oldPassword=req.body.oldPassword;
+  
     try{
-      const farmer=await Farmer.findByPk(req.params.id);
-      //res.status(200).json(farmer);
-
-      let encryptedPassword = await bcrypt.hash(req.body.password,10);
-      farmer.password=encryptedPassword;  
-      //res.status(200).json(farmer);
-
-       await farmer.save();
-       res.status(200).json(farmer);
-
+      
+      const farmer=await Farmer.findByPk(req.params.id)
+  
+      if(!farmer){
+        res.status(401).json("No Such Account Exist")
+        return
+      }
+      //decrept password and compare
+      const valide=await bcrypt.compare(oldPassword,farmer.password)
+    //  res.json(valide);
+       if(! valide ){
+          res.status(401).json("Old Password Incorrect!")
+          return
+      }
+      let encryptedPassword = await bcrypt.hash(newPassword, 10);
+      farmer.password=encryptedPassword
+      await farmer.save()
+      res.status(200).json("Successfully Changed") 
+  
+  
     }catch(err){
-     res.status(404).json(err);
+      res.status(401).json("Internal Server Error") 
+      console.log('eror ',err)
     }
    
 
