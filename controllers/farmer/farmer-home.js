@@ -161,7 +161,7 @@ const getSoldProduct=async (req,res)=>{
                 model:ProductType
                  }]
            });
-        return res.json(SProduct)
+        //return res.json(SProduct)
            for(let sp of SProduct){
               // let p=Product.findAll()
                //res.json(sp.product.name);
