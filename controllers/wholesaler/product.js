@@ -18,6 +18,39 @@ const getProduct=async(req,res)=>{
       res.send(err);
     }
 }
+
+const getAllProduct = async (req, res) => {
+    try {
+      const search = req.query.search;
+      var searchCondition = search
+        ? { name: { [Op.like]: `%${search}%` } }
+        : null;
+  
+      const products = await Product.findAll({
+        where: searchCondition,
+        include: [
+          {
+            model: FarmerProduct,
+          },
+        ],
+      });
+    }catch(e){
+        
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 const getProductDetail=async(req,res)=>{
     try{
         const product=await Product.findOne({where:{id:req.params.id}});
@@ -94,5 +127,6 @@ const getProductDetail=async(req,res)=>{
 
 module.exports={
     getProduct,
-    getProductDetail
+    getProductDetail,
+    getAllProduct,
 }

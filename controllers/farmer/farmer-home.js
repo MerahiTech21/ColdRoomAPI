@@ -17,7 +17,8 @@ const FarmerRent=db.FarmerRent;
    let farmerHomeData=[];
     try{
         let FProduct=await FarmerProduct.findAll(
-           { where:{farmerId:req.params.id}}
+           { where:{farmerId:req.params.id
+           }}
         );
         //res.json(FProduct)
         FProduct.forEach((product)=>{
@@ -26,7 +27,10 @@ const FarmerRent=db.FarmerRent;
        // res.json(FarmerProductAmount);   
         let FBalance=await FarmerBalance.findAll({
             where:{
-                farmerId:req.params.id
+                farmerId:req.params.id,
+                state:{
+                    [Op.ne]:1
+                }
             }
         });
         FBalance.forEach((FarBalance)=>{
