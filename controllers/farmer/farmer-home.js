@@ -161,7 +161,7 @@ const getSoldProduct=async (req,res)=>{
                 model:ProductType
                  }]
            });
-        //return res.json(SProduct)
+        return res.json(SProduct)
            for(let sp of SProduct){
               // let p=Product.findAll()
                //res.json(sp.product.name);
@@ -225,7 +225,9 @@ const getWithDraw=async (req,res)=>{
 
         const withDrawAmount=await FarmerBalance.findAll({
             where:{farmerId:req.params.id,state:1},
-            attributes:['id','balanceAmount','updatedAt']
+            attributes:['id','balanceAmount','updatedAt'],
+            order: [["createdAt", "DESC"]],
+
         });
 
         res.json(withDrawAmount);
