@@ -7,37 +7,7 @@ const ColdRoomProduct = db.coldRoomProduct;
 const ColdRoom = db.coldRoom;
 const FarmerProduct = db.farmerProduct;
 
-const getProduct = async (req, res) => {
-  try {
-    const search = req.query.search;
-    var searchCondition = search
-      ? { name: { [Op.like]: `%${search}%` } }
-      : null;
 
-<<<<<<< HEAD
-    const allProduct = await Product.findAll({
-      where: searchCondition,
-      attributes: { exclude: ["createdAt", "updatedAt"] },
-    });
-    res.json(allProduct);
-  } catch (err) {
-    res.status(400).json("Error "+err);
-  }
-};
-const getProductDetail = async (req, res) => {
-  try {
-    const product = await Product.findOne({ where: { id: req.params.id } });
-    const allData = {};
-    allData.id = product.id;
-    allData.name = product.name;
-    const pTypes = await ProductType.findAll({
-      where: { productId: req.params.id },
-    });
-    // res.json(pTypes);
-    const types = [];
-    for (let type of pTypes) {
-      const price = [];
-=======
 const getProduct=async(req,res)=>{
     try{
         const allProduct=await Product.findAll(
@@ -95,7 +65,6 @@ const getProductDetail=async(req,res)=>{
         const types=[];
         for(let type of pTypes){
             const price=[];
->>>>>>> aa7e13c621aa353079d3dc16482ad8d38247904f
 
       const eachProductType = {};
       eachProductType.image = type.imageUrl;
@@ -145,15 +114,8 @@ const getProductDetail=async(req,res)=>{
   }
 };
 
-<<<<<<< HEAD
-module.exports = {
-  getProduct,
-  getProductDetail,
-};
-=======
 module.exports={
     getProduct,
     getProductDetail,
     getAllProduct,
 }
->>>>>>> aa7e13c621aa353079d3dc16482ad8d38247904f

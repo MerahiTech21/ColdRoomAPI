@@ -5,7 +5,7 @@ const ValidateToken =require('../../middelware/validation/validate-token')
 Router.post('/',ValidateFarmerRegistration,ValidationResult, FarmerController.create);
 Router.get('/:id', FarmerController.getAccount);
 Router.put('/:id',ValidateToken,FarmerController.update);
-Router.get('/restPassword/:phoneNumber', FarmerController.forgotPassword);
+Router.get('/restPassword', FarmerController.resetForgotPassword);
 Router.post('/verifyToken', FarmerController.verifyToken);
 Router.post('/forgotPassword/:phoneNumber', FarmerController.forgotPassword);
 
