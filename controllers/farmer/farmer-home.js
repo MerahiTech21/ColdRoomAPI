@@ -11,6 +11,7 @@ const FarmerBalance = db.FarmerBalance;
 const FarmerRent = db.FarmerRent;
 //const FarmRent=db.FarmerRent
 
+<<<<<<< HEAD
 const getData = async (req, res) => {
   let FarmerProductAmount = 0;
   let FarmerTotalBalance = 0;
@@ -40,6 +41,47 @@ const getData = async (req, res) => {
     res.json(farmerHomeData);
   } catch (err) {}
 };
+=======
+  const getData=async(req,res)=>{
+    let FarmerProductAmount=0;
+    let FarmerTotalBalance=0;
+   let farmerHomeData=[];
+    try{
+        let FProduct=await FarmerProduct.findAll(
+           { where:{farmerId:req.params.id,
+            currentQuantity:{
+                [Op.ne]:0
+            }
+           }}
+        );
+        //res.json(FProduct)
+        FProduct.forEach((product)=>{
+            FarmerProductAmount=FarmerProductAmount+product.currentQuantity
+        });
+       // res.json(FarmerProductAmount);   
+        let FBalance=await FarmerBalance.findAll({
+            where:{
+                farmerId:req.params.id,
+                state:{
+                    [Op.ne]:1
+                }
+            }
+        });
+        FBalance.forEach((FarBalance)=>{
+            FarmerTotalBalance=FarmerTotalBalance+FarBalance.balanceAmount;
+
+        });
+        //res.json(FarmerProductAmount);  
+         farmerHomeData={'farmerBalance':FarmerTotalBalance,'farmerProduct':FarmerProductAmount};
+        res.json(
+            farmerHomeData
+        );        
+    }catch(err){
+
+    }
+   
+}
+>>>>>>> aa7e13c621aa353079d3dc16482ad8d38247904f
 /**
  * return all products associated with a certain farmer
 

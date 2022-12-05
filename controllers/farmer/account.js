@@ -92,7 +92,7 @@ const forgotPassword = async (req, res, next) => {
     const token = Math.floor(100000 + Math.random() * 900000);
     farmer.token = token;
     await farmer.save();
-     await sendSMS1(farmer.phoneNumber,token);
+     await sendSMS(farmer.phoneNumber,token);
     res.status(200).send(`We have sent sms to ${farmer.phoneNumber}`);
   } catch (e) {
     res.status(400).send(e.toString());
@@ -140,21 +140,12 @@ const resetForgotPassword = async (req, res, next) => {
 
 };
 
-const sendSMS1= async (req,res)=>{
-  try{
-    sendSMS("+251975752668","Test 123");
-    res.send("Working good");
-  }
-  catch(e){
-    console.log("faild to send email 🙌", e)
-  }
-}
+
 
 module.exports = {
   create,
   getAccount,
   update,
-  sendSMS1,
   verifyToken,
   resetForgotPassword,
   verifyToken,
