@@ -12,7 +12,7 @@ const farmerProfileRouter=require('./farmer-profile')
 //router.use('/employees',EmployeeRouter);
 router.use('/farmers', FarmerRouter);
 router.use('/auth',AuthRouter);
-router.use('/auth/farmer',AuthRouter);
+//router.use('/auth/farmer',AuthRouter);
 router.use('/farmerHome', farmerHomeRouter);
 router.use('/farmerProfile', farmerProfileRouter);
 

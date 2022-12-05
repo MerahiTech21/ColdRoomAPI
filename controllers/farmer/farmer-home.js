@@ -145,7 +145,6 @@ const getSoldProduct=async (req,res)=>{
     const allSold=[];
     try{
         
-        //res.send('hiii');
         let SProduct=await FarmerProduct.findAll({
             where:{
                 farmerId:req.params.id,
@@ -165,24 +164,39 @@ const getSoldProduct=async (req,res)=>{
         return res.json(SProduct)
            for(let sp of SProduct){
               // let p=Product.findAll()
-               //res.json(sp.product.name);  
-             let rent= await FarmerRent.findOne({where:{farmerProductId:sp.id}});
+               //res.json(sp.product.name);
+                 
+              let rent= await FarmerRent.findOne({where:{farmerProductId:sp.id}});
              let farmerBal=await FarmerBalance.findOne({where:{farmerProductId:sp.id}});
-             let netBal=farmerBal.balanceAmount-rent.rentAmount;
-             
+             let rentAmount;
+             let balance;
+             if(rent===null){
+               rentAmount=0;
+             }
+             else{
+                 rentAmount=rent.rentAmount
+             }
+             if(farmerBal===null){
+                balance=0;
+              }
+              else{
+                  balance=farmerBal.balanceAmount
+              }
+
+             let netBal=balance-rentAmount;
                let products={
                    productName:sp.product.name,
                    typeName:sp.productType.title,
                    quality:sp.quality,
                    image:sp.product.imageUrl,
                    soldAmount:sp.soldQuantity,
-                   soldPrice:Math.ceil(farmerBal.balanceAmount/farmerBal.quantity),
-                   rentCost:rent.rentAmount,    
+                   soldPrice:sp.soldQuantity*sp.pricePerKg,
+                   rentCost:rentAmount,    
                    date:sp.updatedAt,
-                   netBalance:netBal,
+                    netBalance:netBal,
                };
                //console.log(products);
-              //res.json(products);
+             // res.json(products);
                //return;
                 allSold.push(products);
                 
@@ -211,7 +225,9 @@ const getWithDraw=async (req,res)=>{
 
         const withDrawAmount=await FarmerBalance.findAll({
             where:{farmerId:req.params.id,state:1},
-            attributes:['id','balanceAmount','updatedAt']
+            attributes:['id','balanceAmount','updatedAt'],
+            order: [["createdAt", "DESC"]],
+
         });
 
         res.json(withDrawAmount);

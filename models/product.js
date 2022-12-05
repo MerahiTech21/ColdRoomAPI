@@ -9,7 +9,7 @@ module.exports =(sequelize,Datatypes)=>{
             type:Datatypes.STRING,
             allowNull:false,
             get() {
-              const rawValue = this.getDataValue('imageUrl');
+              const rawValue = this.getDataValue('imageUrl')
               return rawValue ? process.env.BASE_URL+'/images/'+rawValue : null;
             }
 
