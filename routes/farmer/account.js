@@ -7,6 +7,6 @@ Router.get('/:id', FarmerController.getAccount);
 Router.put('/:id',ValidateToken,FarmerController.update);
 Router.get('/restPassword/:phoneNumber', FarmerController.forgotPassword);
 Router.post('/verifyToken', FarmerController.verifyToken);
-Router.post('/forgotPassword', FarmerController.forgotPassword);
+Router.post('/forgotPassword/:phoneNumber', FarmerController.forgotPassword);
 
 module.exports=Router;

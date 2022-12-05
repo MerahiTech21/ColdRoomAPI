@@ -17,7 +17,10 @@ const FarmerRent=db.FarmerRent;
    let farmerHomeData=[];
     try{
         let FProduct=await FarmerProduct.findAll(
-           { where:{farmerId:req.params.id
+           { where:{farmerId:req.params.id,
+            currentQuantity:{
+                [Op.ne]:0
+            }
            }}
         );
         //res.json(FProduct)
