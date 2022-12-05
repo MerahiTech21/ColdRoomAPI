@@ -15,6 +15,7 @@ const getWholeSalers = async (req, res) => {
 
     const wSalers = await WholeSaler.findAll({
       where:searchCondition,
+      attributes: { exclude: ["password"] },
 
         include:[
             {
@@ -27,7 +28,7 @@ const getWholeSalers = async (req, res) => {
     }) 
     res.status(200).json(wSalers);
   } catch (error) {
-    throw error
+    res.status(400).json(error)
   }
 };
 

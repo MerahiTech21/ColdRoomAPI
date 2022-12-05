@@ -22,13 +22,13 @@ const { getAllColdroomName } = require('../../controllers/admin/coldRoom');
 //router.use('/employees',EmployeeRouter);
 router.use('/employees',ValidateToken, EmployeeRouter);
 router.use('/auth',AuthRouter);
-router.use('/products',ValidateToken,ProductRouter);
+router.use('/products',ProductRouter);
 router.use('/product-types',ValidateToken,ProductTypeRouter);
 router.use('/coldRooms',ValidateToken,ColdRoomRouter);
 router.use('/address',ValidateToken,AddressRouter);
 router.use('/farmers',ValidateToken,FarmerRouter);
 router.use('/wholesalers',ValidateToken,WholeSalerRouter)
-
+ 
 router.use('/revenues',ValidateToken,RevenueRouter)
 router.use('/sales',ValidateToken,SalesRouter)
 

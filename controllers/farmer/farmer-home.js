@@ -65,15 +65,15 @@ const getFarmerProduct=async (req,res)=>{
 
         });
         for(let farmerProduct of FProducts){
-        let rent=await FarmerRent.findOne({where:{farmerProductId:farmerProduct.id}});
-        let rentAmount=rent ? rent.rentAmount : 0;
+        // let rent=await FarmerRent.findOne({where:{farmerProductId:farmerProduct.id}});
+        // let rentAmount=rent ? rent.rentAmount : 0;
 
            let product={
             id:farmerProduct.product.id,
             name:farmerProduct.product.name,
             image:farmerProduct.product.imageUrl,
                remainingQuantity:farmerProduct.currentQuantity,
-               rentPrice:rentAmount,
+               rentPrice:farmerProduct.rentAmount,
                
            };
            allP.push(product);

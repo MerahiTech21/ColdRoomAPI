@@ -15,6 +15,14 @@ module.exports=(sequelize,DataTypes)=>{
             type:DataTypes.STRING,
             allowNull:false
 
+        },
+        rentAmount:{
+            type:DataTypes.DOUBLE,
+            allowNull:false 
+        },
+        rentPrice:{
+            type:DataTypes.DOUBLE,
+            allowNull:false   
         }
 
     })

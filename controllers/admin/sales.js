@@ -9,13 +9,15 @@ const Order = db.order;
 const getSales = async (req, res) => {
   try {
 
-    const {page,perPage,search,coldRoomId,date}=req.query 
-    const {limit,offset}=getPagination(page,perPage)
+    const {page,search,coldRoomId,date}=req.query 
+    const {limit,offset}=getPagination(page)
+
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
     var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
     var filterByDate= date ? {createdAt:{[Op.gte]:date}} : null
-     var filterByStatus={orderStatus:'completed'}
+     var filterByStatus={orderStatus:'completed'} 
     const sales = await Order.findAndCountAll({
+      distinct: true,
       attributes: { exclude: ["coldRoomId", "wholeSalerId", "updatedAt"] },
       limit:limit,
       offset:offset,
@@ -23,7 +25,7 @@ const getSales = async (req, res) => {
         where:{...filterByColdRoom,...filterByDate,...filterByStatus},
       include: [
         {
-          model: WholeSaler,
+          model: WholeSaler, 
           attributes: ["fName", "lName"],
           where:searchCondition
         },{

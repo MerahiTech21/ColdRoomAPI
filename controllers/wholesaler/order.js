@@ -16,7 +16,7 @@ const placeOrder = async (req, res) => {
   try {
     const orderData = {
       wholeSalerId: req.body.wholeSalerId,
-      paymentStatus: "Unpaid",
+      paymentStatus: "unpaid",
       coldRoomId: req.body.coldRoomId,
       orderStatus: "pending",
       paidAmount: 0,
@@ -100,7 +100,7 @@ const placeOrder = async (req, res) => {
         const productItem = farmerProducts[i];
         let fitToSave
 
-        if (productItem.currentQuantity == 0) {
+        if (productItem.currentQuantity*1 === 0) {
             continue
         } 
         if (requiredQuantity <= 0  || finished == 1) {
@@ -218,9 +218,30 @@ const orderHistory=async(req,res)=>{
         item.price=orderItem.price;
         item.name=orderItem.farmerProduct.product.name;
         item.type=orderItem.farmerProduct.productType.title;
-        
-        allItem.push(item);
 
+        /**
+         * edited by Alemu start
+         */
+        item.typeId=orderItem.farmerProduct.productType.id;
+        
+        const index=allItem.findIndex((existed) => {
+          return existed.typeId ===  orderItem.farmerProduct.productType.id
+        })
+
+        if(index !== -1){
+          const changedItem={...allItem[index]}
+         allItem[index]={
+          ...changedItem,
+          quantity:changedItem.quantity*1 + orderItem.quantity*1,
+
+        }
+        }else{
+            allItem.push(item);
+       }
+      
+      /**
+       * end of editing
+       */
        }
        order.orderitems=allItem;
        allHistory.push(order);
@@ -236,10 +257,43 @@ const orderHistory=async(req,res)=>{
 }
 const changeOrderStatus=async(req,res)=>{
   let order=await Order.findOne({where:{id:req.params.id}});
-  order.orderStatus="canceled";
+
+  // added by Alemu
+   const prevStatus=order.orderStatus
+  if (prevStatus === "completed" || prevStatus === "cancelled") {
+    res.status(403).json("Impossible to Change Completed or Cancelled Order");
+    return;
+  }
+  order.orderStatus="cancelled";
    await order.save();
+   cancelOrder(order)
   res.json(order);
 }
+
+/**
+ *  this function added by Alemu
+ */
+const cancelOrder = async (order) => {
+  try {
+    let orderItems = await OrderItem.findAll({
+      where: { orderId: order.id },
+      include: { model: FarmerProduct },
+    });
+
+    for (let i = 0; i < orderItems.length; i++) {
+      const orderItem = orderItems[i];
+
+      const farmerProduct = await FarmerProduct.findByPk(
+        orderItem.farmerProductId
+      );
+      farmerProduct.soldQuantity -= orderItem.quantity;
+      farmerProduct.currentQuantity += orderItem.quantity * 1;
+      await farmerProduct.save();
+    }
+  } catch (error) {
+    return error;
+  }
+};
 
 module.exports = {
    placeOrder,

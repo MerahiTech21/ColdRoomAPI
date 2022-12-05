@@ -6,21 +6,36 @@ const WholeSaler=db.wholeSaler
 const Order =db.order
 const getWholeSalers = async (req, res) => {
   try {
-    const coldRoomId=req.user.coldRoomId
+    const coldRoomId=req.query.coldRoomId
 
     if (!coldRoomId) {
       res.status(404).json('Error ')
 
     }
-    const wSalers = await WholeSaler.findAll({
+    const search=req.query.search
 
+    var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
+
+    const wSalers = await WholeSaler.findAll({
+      where:searchCondition,
+      attributes: { exclude: ["password"] },
         include:[
             {
-                model:Order,
-                where:{coldRoomId:coldRoomId},
+                model:db.address,
+                as:'address'
+                // where:{coldRoomId:coldRoomId},
                // attributes:[]
+            }, 
+            {
+                model:Order,
+                where:{
+                  coldRoomId:coldRoomId 
+                },
+                required:true
             }
-        ] 
+        ] ,
+        order:[['createdAt','DESC']]
+
     }) 
     res.status(200).json(wSalers);
   } catch (error) {

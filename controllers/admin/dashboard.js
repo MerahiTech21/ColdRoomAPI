@@ -20,7 +20,7 @@ const getData = async (req, res) => {
     });
     console.log("o", totalOrder);
 
-    const totalRevenue = await db.FarmerRent.sum("rentAmount", {
+    const totalRevenue = await db.FarmerBalance.sum("rentAmount", {
       where: {
         createdAt: {
           [Op.gte]: date.subDays(30),
@@ -73,7 +73,7 @@ const pichartData = async (req, res) => {
     const year = req.query.year ? req.query.year : new Date().getFullYear();
 
     const orders = await db.OrderItem.findAll({
-      limit: 3,
+      // limit:2 ,
       attributes: [
         [sequelize.fn("sum", sequelize.col("quantity")), "soldQuantity"],
       ],
@@ -96,11 +96,14 @@ const pichartData = async (req, res) => {
         },
         {
           model: db.order,
-          attributes: ['id'],
-          where:{coldRoomId:req.query.coldRoomId, orderStatus:'completed'
-        },
+          attributes: [],
+           where:{
+             orderStatus:'completed'
+
+            //  orderStatus:'completed'
+             },
         //    right:true,
-          required: true
+          // required: true
         },
   
    
@@ -111,7 +114,7 @@ const pichartData = async (req, res) => {
 
  
     });
-         const total= await db.OrderItem.count({
+         const total= await db.OrderItem.sum('quantity',{
         where: {
             createdAt: sequelize.where(
               sequelize.fn(
@@ -120,9 +123,17 @@ const pichartData = async (req, res) => {
               ),
               year
             ),
-          }
+          } ,
+          include: {
+            model: db.order,
+            where: {
+              orderStatus:'completed',
+            },
+            required: true,
+    
+          },
       })
-    res.json({total,sales:orders});
+    res.json({total:total?total:0,sales:orders});
   } catch (error) {
     console.log("Error " + error);
   }

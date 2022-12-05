@@ -26,7 +26,6 @@ const SaveFarmerProduct = async (req, res) => {
       soldQuantity: 0,
       currentQuantity: req.body.product.quantity,
       quality: req.body.product.quality,
-      pricePerKg: 123,
       warehousePosition: req.body.product.warehousePosition,
     };
     const fp = await FarmerProduct.create(dataToSave);
@@ -111,6 +110,8 @@ const getFarmersProducts = async (req, res) => {
         },
       ],
       group: ["productId"],
+      order:[['createdAt','DESC']]
+
     });
     res.json(fp);
   } catch (error) {
@@ -133,6 +134,8 @@ const getProductDetail = async (req, res) => {
           attributes: ["id", "title", "imageUrl"],
         },
       ],
+      order:[['createdAt','DESC']]
+
       //  group:['createdAt'],
     });
     res.json(fp);
@@ -143,13 +146,14 @@ const getProductDetail = async (req, res) => {
 const getAllFarmerProduct = async (req, res) => {
   try {
 
-    const {page,perPage,search,date,coldRoomId}=req.query 
-    const {limit,offset}=getPagination(page,perPage)
+    const {page,search,date,coldRoomId}=req.query 
+    const {limit,offset}=getPagination(page)
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
     var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
     var filterByDate= date ? {createdAt:{[Op.gte]:date}} : null
 
     const fp = await FarmerProduct.findAndCountAll({
+      distinct: true,
       limit:limit, 
       offset:offset,
        where:{...filterByColdRoom,...filterByDate},
@@ -169,6 +173,8 @@ const getAllFarmerProduct = async (req, res) => {
           attributes: ["id", "name", "imageUrl"],
         },
       ],
+      order:[['createdAt','DESC']]
+
     });
 
     const paginated=getPagingData(fp,page,limit)
@@ -190,6 +196,8 @@ const getProducts = async (req, res) => {
           attributes: ["id", "title"],
         },
       ],
+      order:[['createdAt','DESC']]
+
     });
     res.status(200).json(products);
   } catch (error) {

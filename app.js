@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
  
 app.use(cookieParser());
 app.use('/images',express.static(path.join(__dirname, 'images')));
-  
+   
 //registering router
 app.use('/admin',adminRouter)
 app.use('/farmer',farmerRouter)

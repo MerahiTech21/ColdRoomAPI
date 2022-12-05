@@ -7,15 +7,17 @@ const Farmer = db.farmer;
 const getRevenue = async (req, res) => {
   try {
 
-    const {page,perPage,search,coldRoomId,date}=req.query 
-    const {limit,offset}=getPagination(page,perPage)
+    const {page,search,coldRoomId,date}=req.query 
+    const {limit,offset}=getPagination(page)
     var searchCondition = search ? { [Op.or]:[{fName: { [Op.like]: `%${search}%` }} ,{lName:{ [Op.like]: `%${search}%` }} ]} : null;
     var filterByColdRoom= coldRoomId ? {coldRoomId:coldRoomId} : null
     var filterByDate= date ? {createdAt:{[Op.gte]:date}} : null
  
     const Revenues = await FarmerBalance.findAndCountAll({
-      // limit:limit, 
-      // offset:offset,
+      distinct: true,
+
+      limit:limit, 
+      offset:offset,
        where:{...filterByColdRoom,...filterByDate},
        
       include: [
@@ -49,8 +51,8 @@ const getRevenue = async (req, res) => {
 
         farmer: farmerBalance.farmer,
         coldRoom: farmerBalance.coldRoom,
-        productSku: farmerBalance.farmerProduct?.product.id,
-      //  price: farmerBalance.orderItem.price,
+        warehousePosition: farmerBalance.farmerProduct?.warehousePosition,
+        //  price: farmerBalance.orderItem.price,
         soldDate: farmerBalance.orderItem?.order.createdAt,
         productName: farmerBalance.farmerProduct?.product.name,
         productType: farmerBalance.farmerProduct?.productType.title,

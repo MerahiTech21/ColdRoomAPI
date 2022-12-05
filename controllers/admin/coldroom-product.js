@@ -39,14 +39,14 @@ const getColdroomProducts =async(req,res)=>{
 
 const getProductDetail =async(req,res)=>{
 
-  const { page, perPage, coldRoomId, date } = req.query;
+  const { page, coldRoomId, date } = req.query;
 
-  const { limit, offset } = getPagination(page, perPage);
+  const { limit, offset } = getPagination(page);
   var filterByDate = date ? {createdAt: { [Op.lte]: date }  } :null
 
   try {
     const fp=await FarmerProduct.findAndCountAll({
-      //attributes:['productId'],
+      distinct: true,
       where:{
         productId:req.params.id,
         coldRoomId:coldRoomId,

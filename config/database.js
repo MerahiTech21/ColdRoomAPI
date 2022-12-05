@@ -12,10 +12,9 @@ try {
  } catch (error) {
    console.log('Sequelize Unable to connect to the database:');
  }
-     
  try{  
  db.sequelize=sequelize;
- db.Sequelize=Sequelize; 
+ db.Sequelize=Sequelize;  
  //importing a model
  db.product=require('../models/product.js')(sequelize,DataTypes);
  db.address=require('../models/address.js')(sequelize,DataTypes);
@@ -35,7 +34,7 @@ try {
  db.OrderLog=require('../models/order-log')(sequelize,DataTypes);
  db.OrderPaymentLog=require('../models/order-payment-log')(sequelize,DataTypes);
  db.FarmerBalance=require('../models/farmer-balance')(sequelize,DataTypes);
- db.FarmerRent=require('../models/farmer-rent')(sequelize,DataTypes)
+ db.FarmerRent=require('../garbage-things/farmer-rentde')(sequelize,DataTypes)
 
 //creating a relationship
 db.coldRoom.belongsTo(db.address,{

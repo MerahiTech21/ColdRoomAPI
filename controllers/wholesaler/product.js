@@ -6,7 +6,7 @@ const ColdRoomProduct=db.coldRoomProduct;
 const ColdRoom=db.coldRoom;
 const FarmerProduct=db.farmerProduct;
 
-
+ 
 const getProduct=async(req,res)=>{
     try{
         const allProduct=await Product.findAll(
@@ -22,9 +22,9 @@ const getProductDetail=async(req,res)=>{
     try{
         const product=await Product.findOne({where:{id:req.params.id}});
         const allData={};
-        allData.id=product.id;
+        allData.id=product.id;  
         allData.name=product.name;
-        const pTypes= await ProductType.findAll({
+        const pTypes= await ProductType.findAll({ 
             where:{productId:req.params.id}
         });
        // res.json(pTypes);

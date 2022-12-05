@@ -18,7 +18,7 @@ const Login=async (req,res)=>{
     const valide=await bcrypt.compare(password,farmer.password)
   //  res.json(valide);
     if(! valide ){
-        res.status(401).json("Phone NUmber or Password Incorrect!")      
+        res.status(401).json("Phone Number or Password Incorrect!")      
      }
     const token=  await jwt.sign({id:farmer.id,phoneNumber},process.env.ACCESS_TOKEN_SECRET,{expiresIn:'2h'})
     res.status(200).json({id:farmer.id,phoneNumber:farmer.phoneNumber,token:token})

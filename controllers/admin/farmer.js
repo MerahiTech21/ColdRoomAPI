@@ -53,7 +53,7 @@ const getFarmers=async(req,res)=>{
           totalBalance:farmer.farmerBalances.reduce((sum,balance)=>{
              return sum+balance.balanceAmount
           },0.0),
-          totalRent:farmer.farmerRents.reduce((sum,rent)=>{
+          totalRent:farmer.farmerBalances.reduce((sum,rent)=>{
             return sum+rent.rentAmount
          },0.0),
     }
@@ -97,7 +97,8 @@ const getFarmerBalance = async (req, res) => {
       productType:farmerBalance.farmerProduct?.productType.title,
       quantity:farmerBalance.quantity,
       state:farmerBalance.state,
-      balanceAmount:farmerBalance.balanceAmount
+      balanceAmount:farmerBalance.balanceAmount,
+      rentAmount:farmerBalance.rentAmount
      
     }
   })
@@ -138,46 +139,46 @@ const getFarmerProducts = async (req, res) => {
 
 
 const getFarmerRent = async (req, res) => {
-  try {
-    const farmerRents = await FarmerRent.findAll({
-      where: { farmerId: req.params.id },
-      include: [
-        {
-          model: Farmer,
-          attributes: ["fName", "lName"],
-        },
-        {
-          model: db.OrderItem,
-          include: db.order,
-          // attributes:['title','imageUrl']
-        },
-        {
-          model: db.farmerProduct,
-          include: [db.product, db.productType],
-          // attributes:['title','imageUrl']
-        },
-      ],
-    });
+  // try {
+  //   const farmerRents = await FarmerRent.findAll({
+  //     where: { farmerId: req.params.id },
+  //     include: [
+  //       {
+  //         model: Farmer,
+  //         attributes: ["fName", "lName"],
+  //       },
+  //       {
+  //         model: db.OrderItem,
+  //         include: db.order,
+  //         // attributes:['title','imageUrl']
+  //       },
+  //       {
+  //         model: db.farmerProduct,
+  //         include: [db.product, db.productType],
+  //         // attributes:['title','imageUrl']
+  //       },
+  //     ],
+  //   });
 
-    let farmer = {};
-    const newfarmerRents = farmerRents.map((farmerRent) => {
-      farmer = farmerRent.farmer;
+  //   let farmer = {};
+  //   const newfarmerRents = farmerRents.map((farmerRent) => {
+  //     farmer = farmerRent.farmer;
 
-      return {
-        orderCode: farmerRent.orderItem.order.orderCode,
-        rentPrice: farmerRent.rentPrice,
-        orderDate: farmerRent.orderItem.order.createdAt,
-        productName: farmerRent.farmerProduct?.product.name,
-        productType: farmerRent.farmerProduct?.productType.title,
-        quantity: farmerRent.quantity,
-        state: farmerRent.state,
-        rentAmount: farmerRent.rentAmount,
-      };
-    });
-    res.json({farmer,farmerRents:newfarmerRents});
-  } catch (error) {
-    res.status(400).json("Error While Fetching" + error);
-  }
+  //     return {
+  //       orderCode: farmerRent.orderItem.order.orderCode,
+  //       rentPrice: farmerRent.rentPrice,
+  //       orderDate: farmerRent.orderItem.order.createdAt,
+  //       productName: farmerRent.farmerProduct?.product.name,
+  //       productType: farmerRent.farmerProduct?.productType.title,
+  //       quantity: farmerRent.quantity,
+  //       state: farmerRent.state,
+  //       rentAmount: farmerRent.rentAmount,
+  //     };
+  //   });
+  //   res.json({farmer,farmerRents:newfarmerRents});
+  // } catch (error) {
+  //   res.status(400).json("Error While Fetching" + error);
+  // }
 };
 
 

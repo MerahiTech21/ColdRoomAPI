@@ -7,22 +7,33 @@ const getData = async (req, res) => {
 
     console.log(date.subDays(30));
 
-    const totalProduct = await db.product.count({});
-    console.log("Pro", totalProduct);
+    var totalProduct = await db.product.findAndCountAll({ 
+      distinct: true,
+      // subQuery: false,
+      include: {
+        model:db.farmerProduct,
+        where:{coldRoomId:req.query.coldRoomId},
+          // required:true,
+      } 
+      
+    });
 
-    const totalOrder = await db.order.count({
+ 
+    console.log("Pro", totalProduct);
+    // return res.json('prod no ' +totalProduct)
+    const totalOrder = await db.order.findAndCountAll({
+      distinct:true,
       where: {
         createdAt: {
           // [Op.gte]: "2022-11-01 02:29:14"
           [Op.gt]: date.subDays(30).toISOString(),
-          
         },
-        coldRoomId:req.query.coldRoomId
+         coldRoomId: req.query.coldRoomId,
       },
     });
     console.log("o", totalOrder);
 
-    const totalRevenue = await db.FarmerRent.sum("rentAmount", {
+    const totalRevenue = await db.FarmerBalance.sum("rentAmount", {
       where: {
         createdAt: {
           [Op.gte]: date.subDays(30),
@@ -33,13 +44,13 @@ const getData = async (req, res) => {
     console.log("re", totalRevenue);
 
     res.json({
-      totalProduct: totalProduct,
-      totalOrder: totalOrder,
-      totalRevenue: totalRevenue,
+      totalProduct: totalProduct.count,
+      totalOrder: totalOrder.count,
+      totalRevenue: totalRevenue? totalRevenue :0,
     });
   } catch (err) {
     console.log("Error " + err);
-    res.json(err);
+    res.status(400).json('Error'+err);
   }
 };
 
@@ -58,8 +69,7 @@ const bargraphData = async (req, res) => {
           year
         ),
         coldRoomId:req.query.coldRoomId,
-        status:'completed'
-
+        orderStatus: "completed",
       },
       attributes: [
         [sequelize.fn("MONTHNAME", sequelize.col("createdAt")), "month"],
@@ -70,6 +80,7 @@ const bargraphData = async (req, res) => {
     res.json(orders);
   } catch (error) {
     console.log(error);
+    res.status(400).json('Error '+error)
   }
 };
 
@@ -78,16 +89,13 @@ const pichartData = async (req, res) => {
     const year = req.query.year ? req.query.year : new Date().getFullYear();
 
     const orders = await db.OrderItem.findAll({
-      limit: 3,
+      // limit: 2,
       attributes: [
         [sequelize.fn("sum", sequelize.col("quantity")), "soldQuantity"],
       ],
       where: {
         createdAt: sequelize.where(
-          sequelize.fn(
-            "YEAR",
-            sequelize.col("orderItem.createdAt")
-          ),
+          sequelize.fn("YEAR", sequelize.col("orderItem.createdAt")),
           year
         ),
       },
@@ -96,48 +104,45 @@ const pichartData = async (req, res) => {
           model: db.farmerProduct,
           attributes: ['id'],
           include: [{ model: db.product, attributes: ["name"] }],
-        //    right:true,
-          required: true
-        }, 
+          //    right:true,
+          required: true,
+        },
         {
           model: db.order,
-          attributes: ['id'],
-          where:{coldRoomId:req.query.coldRoomId, orderStatus:'completed'
+          attributes: [],
+          where:{
+            coldRoomId:req.query.coldRoomId, orderStatus:'completed'
         },
         //    right:true,
-          required: true
+        //   required: true
         },
-    
-        
       ],
       order: [["soldQuantity", "Desc"]],
       group: [db.Sequelize.col("name", { model: db.product })],
-
-
- 
+      // group: ['name'],
     });
-         const total= await db.OrderItem.count({
-        where: {
-            createdAt: sequelize.where(
-              sequelize.fn(
-                "YEAR",
-                sequelize.col("orderItem.createdAt")
-              ),
-              year
-            ),
 
-          },
-          include:{
-            model:db.order,
-            where:{
-              coldRoomId:req.query.coldRoomId,
-              required:true
-            }
-          }
-      })
-    res.json({total,sales:orders});
+    const total = await db.OrderItem.sum("quantity",{
+      where: {
+        createdAt: sequelize.where(
+          sequelize.fn("YEAR", sequelize.col("orderItem.createdAt")),
+          year
+        ),
+      },
+      include: {
+        model: db.order,
+        where: {
+          coldRoomId: req.query.coldRoomId,
+          orderStatus:'completed',
+        },
+        required: true,
+
+      },
+    });
+    res.json({ total, sales: orders });
   } catch (error) {
     console.log("Error " + error);
+    res.status(400).json("Error "+error)
   }
 };
 module.exports = { getData, bargraphData, pichartData };
