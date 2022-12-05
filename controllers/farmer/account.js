@@ -87,24 +87,27 @@ const forgotPassword = async (req, res, next) => {
     const phoneNumber = req.params.phoneNumber;
     const farmer = await Farmer.findOne({ where: { phoneNumber } });
     if (!farmer) {
-      return res.status(404).json({ msg: `User not found with email=${email}` });
+      return res.status(404).json({ msg: `User not found with phoneNumber=${phoneNumber}` });
     }
     const token = Math.floor(100000 + Math.random() * 900000);
     farmer.token = token;
     await farmer.save();
-     await sendSMS(farmer.phoneNumber,token);
-    res.status(200).send(`We have sent sms to ${farmer.phoneNumber}`);
+    const extractedPhoneNumber=phoneNumber.substring(0);
+    const finalPhoneNumber="+251".concat(extractedPhoneNumber);
+     await sendSMS(finalPhoneNumber,token);
+    res.status(200).json(`We have sent sms to ${farmer.phoneNumber}`);
   } catch (e) {
-    res.status(400).send(e.toString());
+    res.status(400).json(e.toString());
   }
 
 };
 
 const verifyToken = async (req, res, next) => {
-  const { tokenCode, phoneNumber } = req.body;
+  const phoneNumber=req.params.phoneNumber;
+   const tokenCode=req.body.tokenCode;
   const farmer = await Farmer.findOne({ where: { phoneNumber } });
   if (!farmer) {
-    return res.status(404).json({ msg: `User not found with email=${email}` });
+    return res.status(404).json({ msg: `User not found with phoneNumber=${phoneNumber}` });
   }
   //it should be compared by jwt
   if (!tokenCode === farmer.token) {
@@ -112,8 +115,8 @@ const verifyToken = async (req, res, next) => {
   }
    farmer.token='';
   await farmer.save();
-  const token = jwt.sign({ ...farmer.dataValues }, process.env.Access_TOKEN_SECURE);
-  res.status(200).json({ token, name: farmer.name , phoneNo: user.phoneNo })
+  const token = jwt.sign({ ...farmer.dataValues }, process.env.ACCESS_TOKEN_SECRET);
+  res.status(200).json({ token, id:farmer.id, name: farmer.name , phoneNo: farmer.phoneNo })
   // let it loign 
 };
 
@@ -121,7 +124,7 @@ const verifyToken = async (req, res, next) => {
 const resetForgotPassword = async (req, res, next) => {
   try{
     const { newPassword } = req.body;
-  const user = await Farmer.findByPk(req.id);
+  const user = await Farmer.findByPk(req.params.id);
   if(!user) return res.status(404).json({msg:"faild", user: req.user});
   bcrypt.hash(newPassword, 10, (err, hash) => {
     if (err) {
