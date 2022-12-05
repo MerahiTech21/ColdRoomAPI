@@ -27,6 +27,7 @@ const SaveFarmerProduct = async (req, res) => {
       currentQuantity: req.body.product.quantity,
       quality: req.body.product.quality,
       warehousePosition: req.body.product.warehousePosition,
+      addedBy:req.body.addedBy
     };
     const fp = await FarmerProduct.create(dataToSave);
     res.json("saved");

@@ -121,6 +121,7 @@ db.FarmerBalance.belongsTo(db.OrderItem)
 db.FarmerBalance.belongsTo(db.farmer)
 db.farmer.hasMany(db.FarmerBalance)
 db.FarmerBalance.belongsTo(db.farmerProduct)
+db.farmerProduct.hasMany(db.FarmerBalance)
    
 db.FarmerRent.belongsTo(db.OrderItem)
 db.FarmerRent.belongsTo(db.farmer)

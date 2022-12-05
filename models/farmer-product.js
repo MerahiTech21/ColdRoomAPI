@@ -24,6 +24,9 @@ module.exports =(sequelize,Datatypes)=>{
             type:Datatypes.DOUBLE, 
             allowNull:false 
          },
+         addedBy:{
+            type:Datatypes.STRING, 
+         },
          // pricePerKg:{ //this field come from current cold room product price
          //    type:Datatypes.DOUBLE,
          //    allowNull:false

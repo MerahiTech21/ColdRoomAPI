@@ -29,10 +29,9 @@ module.exports=(sequelize,DataTypes)=>{
             unique:true,
 
         },
-        // sex:{
-        //     type:DataTypes.STRING,
-        //     allowNull:false,
-        // },
+        resetToken:{
+            type:DataTypes.STRING,
+        },
         role:{
             type:DataTypes.STRING,
             allowNull:false,

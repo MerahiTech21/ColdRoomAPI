@@ -20,7 +20,7 @@ const placeOrder = async (req, res) => {
       coldRoomId: req.body.coldRoomId,
       orderStatus: "pending",
       paidAmount: 0,
-      orderCode:Math.floor(Math.random()*1000 +100)
+      orderCode:Math.floor(Math.random()*10000 +10000)
     };
 
     const orderItems = req.body.orderItems;
