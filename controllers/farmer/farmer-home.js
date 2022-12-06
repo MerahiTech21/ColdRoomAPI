@@ -70,7 +70,7 @@ const getFarmerProduct = async (req, res) => {
         name: farmerProduct.product.name,
         image: farmerProduct.product.imageUrl,
         remainingQuantity: farmerProduct.currentQuantity,
-        createdAt: farmerProduct.createdAt,
+        createdAt: farmerProduct.createdAt, 
       };
       allP.push(product);
     }

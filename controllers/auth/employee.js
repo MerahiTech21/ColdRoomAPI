@@ -16,14 +16,19 @@ const Login = async (req, res) => {
     if (!employee || employee.role !== "admin") {
       return res.status(401).json("No Such Account Exist !");
     }
+
+    if (!employee.status) {
+      // throw  'No Such Account Exist !'
+      return res.status(403).json("UnAuthorized to Login !");
+    }
     //decrept password and compare
     const valide = await bcrypt.compare(password, employee.password);
     //  res.json(valide);
     if (!valide) {
       res.status(401).json("Email or Password Incorrect!");
     }
-    if (employee.role === "admin") {
-      const token = jwt.sign(
+
+    const token = jwt.sign(
         { id: employee.id, email },
         process.env.ACCESS_TOKEN_SECRET
       );
@@ -31,7 +36,7 @@ const Login = async (req, res) => {
       res
         .status(200)
         .json({ id: employee.id, email: employee.email, token: token });
-    }
+    
   } catch (err) {
     res.status(403).json("Error " + err);
     console.log("eror ", err);
@@ -47,6 +52,10 @@ const LocalAdminLogin = async (req, res) => {
     if (!employee || employee.role !== "local admin") {
       // throw  'No Such Account Exist !'
       return res.status(403).json("No Such Account Exist !");
+    }
+    if (!employee.status) {
+      // throw  'No Such Account Exist !'
+      return res.status(403).json("UnAuthorized to Login !");
     }
     //decrept password and compare
     const valide = await bcrypt.compare(password, employee.password);

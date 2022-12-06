@@ -97,7 +97,7 @@ db.coldRoomProduct.belongsTo(db.coldRoom,{  onDelete: 'RESTRICT',
 onUpdate: 'RESTRICT'})
 db.coldRoomProduct.belongsTo(db.productType,{  onDelete: 'RESTRICT',
 onUpdate: 'RESTRICT'}) 
-db.productType.hasOne(db.coldRoomProduct,{  onDelete: 'RESTRICT',
+db.productType.hasOne(db.coldRoomProduct,{  onDelete: 'NULL',
 onUpdate: 'RESTRICT'}) 
 
 ////
@@ -108,8 +108,8 @@ db.productType.belongsToMany(db.farmer,{through:db.farmerProduct})
 //  order Item
 db.order.hasMany(db.OrderItem)
 db.OrderItem.belongsTo(db.order)
-db.farmerProduct.hasMany(db.OrderItem)
-db.OrderItem.belongsTo(db.farmerProduct)
+db.farmerProduct.hasMany(db.OrderItem,{  onDelete: 'NULL',onUpdate: 'RESTRICT'})
+db.OrderItem.belongsTo(db.farmerProduct,{  onDelete: 'NULL',onUpdate: 'RESTRICT'})
 /// order Log related
 db.order.hasMany(db.OrderLog);
 db.OrderLog.belongsTo(db.order)

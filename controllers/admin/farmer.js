@@ -48,7 +48,7 @@ const getFarmers=async(req,res)=>{
           fullName:farmer.fName+ ' '+farmer.lName,
           location:farmer.address.woreda,
           totalProduct:farmer.farmerProducts.reduce((total,product)=>{
-            return total+product.oldQuantity
+            return total+product.currentQuantity
           },0),
           totalBalance:farmer.farmerBalances.reduce((sum,balance)=>{
              return sum+balance.balanceAmount
@@ -85,9 +85,8 @@ const getFarmerBalance = async (req, res) => {
     ]
     });
    
-   let farmer={}
-  const newFarmerBalances=  farmerBalances.map((farmerBalance)=>{
-          farmer=farmerBalance.farmer
+    let farmer=await Farmer.findByPk(req.params.id)
+    const newFarmerBalances=  farmerBalances.map((farmerBalance)=>{
 
     return { 
       orderCode:farmerBalance.orderItem.order.orderCode,

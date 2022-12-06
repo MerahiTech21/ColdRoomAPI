@@ -10,6 +10,10 @@ const FarmerRent = db.FarmerRent;
 
 const getColdroomProducts = async (req, res) => {
   try {
+
+    const {search } = req.query;
+    var searchCondition = search ? {name: { [Op.like]: `%${search}%` }} : null;
+  
     const fp = await FarmerProduct.findAll({
       where: { coldRoomId: req.params.id },
       attributes: [
@@ -18,10 +22,15 @@ const getColdroomProducts = async (req, res) => {
           db.sequelize.fn("sum", db.sequelize.col("oldQuantity")),
           "totalProduct",
         ],
+        [
+          db.sequelize.fn("sum", db.sequelize.col("currentQuantity")),
+          "totalCurrentProduct",
+        ],
       ],
       include: [
         {
           model: db.product,
+          where:searchCondition,
           attributes: ["name", "imageUrl"],
         },
         {

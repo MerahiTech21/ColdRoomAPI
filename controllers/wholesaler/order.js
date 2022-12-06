@@ -103,7 +103,7 @@ const placeOrder = async (req, res) => {
         if (productItem.currentQuantity*1 === 0) {
             continue
         } 
-        if (requiredQuantity <= 0  || finished == 1) {
+        if (requiredQuantity <= 0  || finished === 1) {
             break
         }
 
@@ -138,7 +138,7 @@ const placeOrder = async (req, res) => {
           fitToSave = {
             quantity: productItem.currentQuantity,
             // orderId: newOrder.id,
-            farmerProductId: productItem.id,
+            farmerProductId: 11,
             price: coldRoomProductPrice,
           };
           //updating /decreasing product quantity

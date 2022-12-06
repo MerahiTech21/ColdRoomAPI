@@ -84,15 +84,19 @@ const update = async (req, res) => {
   };
 
   try {
-    try {
+    
       const updatedColdRoom = await ColdRoom.findOne({
         where: { id: req.params.id },
       });
 
       if (updatedColdRoom) {
-        let addressUpdated = await Address.update(AddressInfo, {
-          where: { id: updatedColdRoom.addressId },
-        });
+        let address = await Address.findByPk(updatedColdRoom.addressId);
+
+        address.woreda=AddressInfo.woreda
+        address.kebele=AddressInfo.kebele
+        address.zone=AddressInfo.zone
+        address.region=AddressInfo.region
+        await address.save()
         const coldRoomUpdated = await ColdRoom.update(ColdRoomInfo, {
           where: { id: updatedColdRoom.id },
         });
@@ -106,10 +110,7 @@ const update = async (req, res) => {
           });
         }
       }
-       
-    } catch (error) {
-      throw error;
-    }
+      
 
     const coldRoom = await ColdRoom.findOne({
       where: { id: req.params.id },
@@ -118,7 +119,8 @@ const update = async (req, res) => {
           [
             db.Sequelize.fn(
               "sum",
-             ),
+              db.Sequelize.col("farmerProducts.currentQuantity")
+            ),
             "stockProduct",
           ],
         ],

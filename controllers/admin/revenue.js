@@ -58,7 +58,7 @@ const getRevenue = async (req, res) => {
         productType: farmerBalance.farmerProduct?.productType.title,
         addedDate: farmerBalance.farmerProduct?.createdAt,
         quantity: farmerBalance.quantity,
-        amount: farmerBalance.balanceAmount,
+        amount: farmerBalance.rentAmount,
       };
     });
     res.json({...paginated,data_name:newRevenues});

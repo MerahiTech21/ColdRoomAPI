@@ -60,6 +60,7 @@ const getAll = async (req, res) => {
           model: FarmerProduct,
         },
       ],
+      order:[['createdAt','DESC']]
     });
 
     const manipulatedProducts = products.map((product) => {
@@ -87,6 +88,8 @@ const getProductType = async (req, res) => {
           model: FarmerProduct,
         },
       ],
+      order:[['createdAt','DESC']]
+
     });
 
     const manipulatedProducts = productTypes.map((productType) => {

@@ -30,9 +30,9 @@ const getData = async (req, res) => {
     console.log("re", totalRevenue);
 
     res.json({
-      totalProduct: totalProduct,
-      totalOrder: totalOrder,
-      totalRevenue: totalRevenue,
+      totalProduct: totalProduct ? totalProduct :0,
+      totalOrder: totalOrder ? totalOrder :0,
+      totalRevenue: totalRevenue ? totalRevenue : 0,
     });
   } catch (err) {
     console.log("Error " + err);
