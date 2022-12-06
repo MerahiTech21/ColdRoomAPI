@@ -127,6 +127,7 @@ const getProductType = async (req, res) => {
 const getSoldProduct = async (req, res) => {
   const allSold = [];
   try {
+    //   res.json("hii");
     let SProduct = await FarmerProduct.findAll({
       where: {
         farmerId: req.params.id,
@@ -146,17 +147,24 @@ const getSoldProduct = async (req, res) => {
         },
       ],
     });
-    //return res.json(SProduct)
-    for (let sp of SProduct) {
+    //res.json(SProduct);
+   let sp=SProduct;
+    for (let i=0;i<sp.length ;i++) {
       // let p=Product.findAll()
       //res.json(sp.product.name);
+      let farmerBal = await FarmerBalance.findOne({
+        where: { farmerProductId: sp[i].id },
+      });
+     // res.json(farmerBal)
+      if(farmerBal===null ){
+          continue;
+      }
 
       let rent = await FarmerRent.findOne({
-        where: { farmerProductId: sp.id },
+        where: { farmerProductId: sp[i].id },
       });
-      let farmerBal = await FarmerBalance.findOne({
-        where: { farmerProductId: sp.id },
-      });
+      //res.json(rent)
+     
       let rentAmount;
       let balance;
       if (rent === null) {
@@ -169,41 +177,42 @@ const getSoldProduct = async (req, res) => {
       } else {
         balance = farmerBal.balanceAmount;
       }
+      
 
       let netBal = balance - rentAmount;
       let products = {
-        productName: sp.product.name,
-        typeName: sp.productType.title,
-        quality: sp.quality,
-        image: sp.product.imageUrl,
-        soldAmount: sp.soldQuantity,
-        soldPrice: sp.soldQuantity * sp.pricePerKg,
+        productName: sp[i].product.name,
+        typeName: sp[i].productType.title,
+        quality: sp[i].quality,
+        image: sp[i].product.imageUrl,
+        soldAmount: sp[i].soldQuantity,
+        soldPrice: sp[i].soldQuantity * sp.pricePerKg,
         rentCost: rentAmount,
         date: sp.updatedAt,
         netBalance: netBal,
       };
 
-      const totalBalance= sp.farmerBalances.reduce((sum, balance) => {
+      const totalBalance= sp[i].farmerBalances.reduce((sum, balance) => {
         return sum + balance.balanceAmount;
       }, 0.0)
-      const rentCost= sp.farmerBalances.reduce((sum, balance) => {
+      const rentCost= sp[i].farmerBalances.reduce((sum, balance) => {
         return sum + balance.rentAmount;
       }, 0.0)
 
       let newproducts = {
-        productName: sp.product.name,
-        typeName: sp.productType.title,
-        quality: sp.quality,
-        image: sp.product.imageUrl,
-        soldAmount: sp.soldQuantity,
+        productName: sp[i].product.name,
+        typeName: sp[i].productType.title,
+        quality: sp[i].quality,
+        image: sp[i].product.imageUrl,
+        soldAmount: sp[i].soldQuantity,
         totalBalance: totalBalance,
         rentCost: rentCost,
-        date: sp.updatedAt,
+        date: sp[i].updatedAt,
         netBalance: totalBalance-rentCost,
       };
 
       //console.log(products);
-      // res.json(products);
+     // res.json(newproducts);
       //return;
       allSold.push(newproducts);
     }
